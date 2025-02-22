@@ -21,7 +21,7 @@ class PrescriptionController extends Controller
     public function create()
     {
         $patients = Patient::all();
-        $doctors = Employee::where('position', 'doctor')->get();
+        $doctors = Employee::where('position', 'Bác sĩ')->get();
 
         return view('prescriptions.create', compact('patients', 'doctors'));
     }
@@ -39,9 +39,9 @@ class PrescriptionController extends Controller
         // Tạo hồ sơ bệnh án mới
         $medicalRecord = MedicalRecord::create([
             'visit_date' => now(), // Ngày khám hiện tại
-            'symptoms' => null, 
-            'diagnosis' => null, 
-            'treatment' => null, 
+            'symptoms' => null,
+            'diagnosis' => null,
+            'treatment' => null,
         ]);
 
         // Tạo đơn thuốc với medical_record_id vừa tạo
@@ -49,7 +49,7 @@ class PrescriptionController extends Controller
             'medical_record_id' => $medicalRecord->id,
         ]));
 
-        return redirect()->route('prescriptions.index')->with('success', 'Thêm đơn thuốc thành công.');
+        return redirect()->route('prescriptions')->with('success', 'Thêm đơn thuốc thành công.');
     }
 
     // Hiển thị form chỉnh sửa đơn thuốc
@@ -75,7 +75,7 @@ class PrescriptionController extends Controller
         $prescription = Prescription::findOrFail($id);
         $prescription->update($request->all()); // Cập nhật thông tin đơn thuốc
 
-        return redirect()->route('prescriptions.index')->with('success', 'Cập nhật đơn thuốc thành công.');
+        return redirect()->route('prescriptions')->with('success', 'Cập nhật đơn thuốc thành công.');
     }
 
     // Xóa đơn thuốc

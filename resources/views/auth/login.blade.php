@@ -1,25 +1,28 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập</title>
-</head>
-<body>
-    <h1>Đăng Nhập</h1>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h2>Đăng Nhập</h2>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('login') }}" method="POST">
         @csrf
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" name="email" required>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" required>
         </div>
-        <div>
-            <label for="password">Mật khẩu:</label>
-            <input type="password" name="password" required>
+        <div class="form-group">
+            <label for="password">Mật Khẩu</label>
+            <input type="password" name="password" class="form-control" required>
         </div>
-        <div>
-            <button type="submit">Đăng Nhập</button>
-        </div>
+        <button type="submit" class="btn btn-primary">Đăng Nhập</button>
     </form>
-</body>
-</html>
+</div>
+@endsection

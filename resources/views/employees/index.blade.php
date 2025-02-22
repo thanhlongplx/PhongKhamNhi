@@ -187,7 +187,7 @@
                         <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeModal"
                                 onclick="editEmployee('{{ $employee->id }}', '{{ $employee->position }}', '{{ $employee->department }}', '{{ $employee->phone_number }}')">
                                 Sửa
-                            </button>=</td> <!-- Ngày cập nhật -->
+                            </button></td> <!-- Ngày cập nhật -->
                         <td>
 
                             <!-- Nút xóa -->

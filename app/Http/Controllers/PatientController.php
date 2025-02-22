@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\Patient;
 
@@ -12,6 +13,8 @@ class PatientController extends Controller
     {
         $patients = Patient::paginate(10);
         return view('patients.index', compact('patients'));
+        $doctors = Employee::paginate(10);
+        return view('patients.index', compact('doctors'));
     }
 
     // Thêm bệnh nhân mới
@@ -29,14 +32,14 @@ class PatientController extends Controller
         ]);
 
         Patient::create($request->all());
-        return redirect()->route('patients.index')->with('success', 'Thêm bệnh nhân thành công.');
+        return redirect()->route('patients')->with('success', 'Thêm bệnh nhân thành công.');
     }
 
     // Hiển thị form sửa bệnh nhân
     public function edit($id)
     {
-        $patient = Patient::findOrFail($id);
-        return view('patients.edit', compact('patient'));
+        $patients = Patient::findOrFail($id);
+        return view('patients.index', compact('patients'));
     }
 
     // Cập nhật thông tin bệnh nhân
@@ -55,13 +58,13 @@ class PatientController extends Controller
 
         $patient = Patient::findOrFail($id);
         $patient->update($request->only([
-            'name', 
-            'date_of_birth', 
-            'sex', 
-            'height', 
-            'weight', 
-            'parent_name', 
-            'address', 
+            'name',
+            'date_of_birth',
+            'sex',
+            'height',
+            'weight',
+            'parent_name',
+            'address',
             'medical_history'
         ]));
 
@@ -73,6 +76,6 @@ class PatientController extends Controller
     {
         $patient = Patient::findOrFail($id);
         $patient->delete();
-        return redirect()->route('patients.index')->with('success', 'Xóa bệnh nhân thành công.');
+        return redirect()->route('patients')->with('success', 'Xóa bệnh nhân thành công.');
     }
 }

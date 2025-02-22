@@ -21,8 +21,11 @@
                 <label for="employee_id">Bác Sĩ</label>
                 <select class="form-control" name="employee_id" required>
                     <option value="">Chọn Bác Sĩ</option>
+
                     @foreach ($doctors as $doctor)
-                        <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
+                        <option value="{{ $doctor->id }}" {{ $doctor->id == $prescription->employee_id ? 'selected' : '' }}>
+                            {{ $doctor->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>

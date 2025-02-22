@@ -10,7 +10,7 @@ class MedicalRecordController extends Controller
     // Lấy danh sách tất cả hồ sơ bệnh án
     public function index()
     {
-        $medicalRecords = MedicalRecord::with('patient')->get(); // Lấy hồ sơ kèm thông tin bệnh nhân
+        $medicalRecords = MedicalRecord::with(['prescriptions', 'patient'])->get(); // Lấy hồ sơ kèm thông tin bệnh nhân
 
         return view('medical_records.index', compact('medicalRecords')); // Sử dụng compact để truyền dữ liệu
     }

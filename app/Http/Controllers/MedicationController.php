@@ -29,7 +29,7 @@ class MedicationController extends Controller
         ]);
 
         Medication::create($request->all());
-        return redirect()->route('medications.index')->with('success', 'Thêm thuốc thành công.');
+        return redirect()->route('medications')->with('success', 'Thêm thuốc thành công.');
     }
 
     // Hiển thị form sửa thuốc
@@ -56,6 +56,13 @@ class MedicationController extends Controller
         $medication = Medication::findOrFail($id);
         $medication->update($request->all());
 
-        return redirect()->route('medications.index')->with('success', 'Cập nhật thuốc thành công.');
+        return redirect()->route('medications')->with('success', 'Cập nhật thuốc thành công.');
+    }
+
+    public function destroy($id)
+    {
+        $patient = Medication::findOrFail($id);
+        $patient->delete();
+        return redirect()->route('medications')->with('success', 'Xóa thuốc thành công.');
     }
 }
