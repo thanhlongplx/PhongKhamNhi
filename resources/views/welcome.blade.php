@@ -32,48 +32,68 @@
             <h2>Quản lí nhanh các chuyên mục quản lí của bạn</h2>
 
             @if(Auth::check())
-                @php
-                    $role = Auth::user()->role;
-                @endphp
+    @php
+        $role = Auth::user()->role;
+    @endphp
 
-                <div class="mt-4">
-                    @if(in_array($role, ['clinic_manager', 'admin']))
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/staffs">
-                            <i class="fas fa-user-check"></i> Danh sách nhân viên
-                        </a>
-                    @endif
-
-                    @if(in_array($role, ['nurse', 'doctor', 'clinic_manager']))
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/patients">
-                            <i class="fas fa-user"></i> Quản lí bệnh nhân
-                        </a>
-                    @endif
-
-                    @if($role === 'clinic_manager')
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medications">
-                            <i class="fas fa-pills"></i> Quản lí thuốc
-                        </a>
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/users">
-                            <i class="fas fa-users"></i> Quản lí người dùng
-                        </a>
-                    @endif
-
-                    @if(in_array($role, ['doctor', 'clinic_manager', 'nurse']))
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medical_records">
-                            <i class="fas fa-file-alt"></i> Quản lí hồ sơ bệnh án
-                        </a>
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescriptions">
-                            <i class="fas fa-file-plus"></i> Quản lí đơn thuốc
-                        </a>
-                    @endif
-
-                    @if(in_array($role, ['doctor', 'clinic_manager']))
-                        <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescription-details">
-                            <i class="fas fa-file-medical"></i> Quản lí chi tiết đơn thuốc
-                        </a>
-                    @endif
-                </div>
-            @endif
+    <div class="mt-4">
+        @if($role === 'admin')
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/staffs">
+                <i class="fas fa-user-check"></i> Danh sách nhân viên
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/patients">
+                <i class="fas fa-user"></i> Quản lí bệnh nhân
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medications">
+                <i class="fas fa-pills"></i> Quản lí thuốc
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/users">
+                <i class="fas fa-users"></i> Quản lí người dùng
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medical_records">
+                <i class="fas fa-file-alt"></i> Quản lí hồ sơ bệnh án
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescriptions">
+                <i class="fas fa-file-plus"></i> Quản lí đơn thuốc
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescription-details">
+                <i class="fas fa-file-medical"></i> Quản lí chi tiết đơn thuốc
+            </a>
+        @elseif($role === 'clinic_manager')
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/staffs">
+                <i class="fas fa-user-check"></i> Danh sách nhân viên
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/patients">
+                <i class="fas fa-user"></i> Quản lí bệnh nhân
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medications">
+                <i class="fas fa-pills"></i> Quản lí thuốc
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/users">
+                <i class="fas fa-users"></i> Quản lí người dùng
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medical_records">
+                <i class="fas fa-file-alt"></i> Quản lí hồ sơ bệnh án
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescriptions">
+                <i class="fas fa-file-plus"></i> Quản lí đơn thuốc
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescription-details">
+                <i class="fas fa-file-plus"></i> Chi tiết đơn thuốc
+            </a>
+        @elseif(in_array($role, ['doctor', 'nurse']))
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/patients">
+                <i class="fas fa-user"></i> Quản lí bệnh nhân
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/medical_records">
+                <i class="fas fa-file-alt"></i> Quản lí hồ sơ bệnh án
+            </a>
+            <a class="collapse-item btn btn-primary btn-lg mb-2" href="/prescriptions">
+                <i class="fas fa-file-plus"></i> Quản lí đơn thuốc
+            </a>
+        @endif
+    </div>
+@endif
         </div>
     </div>
 @endsection

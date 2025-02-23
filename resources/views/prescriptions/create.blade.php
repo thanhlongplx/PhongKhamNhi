@@ -12,7 +12,7 @@
                 <select class="form-control" name="patient_id" required>
                     <option value="">Chọn Bệnh Nhân</option>
                     @foreach ($patients as $patient)
-                        <option value="{{ $patient->id }}">{{ $patient->name }}</option>
+                        <option value="{{ $patient->id }}">{{ $patient->id }} |{{ $patient->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -23,7 +23,7 @@
                     <option value="">Chọn Bác Sĩ</option>
 
                     @foreach ($doctors as $doctor)
-                        <option value="{{ $doctor->id }}" {{ $doctor->id == $prescription->employee_id ? 'selected' : '' }}>
+                        <option value="{{ $doctor->id }}" {{ $doctor->id  ? 'selected' : '' }}>
                             {{ $doctor->name }}
                         </option>
                     @endforeach

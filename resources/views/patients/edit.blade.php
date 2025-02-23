@@ -5,7 +5,7 @@
         <h2>Sửa Thông Tin Bệnh Nhân</h2>
         <form action="{{ route('patients.update', $patient->id) }}" method="POST">
             @csrf
-            @method('POST') <!-- Nếu bạn sử dụng PUT hoặc PATCH, hãy thay đổi thành PUT hoặc PATCH -->
+            @method('PUT') <!-- Thay đổi thành PUT nếu bạn đang sử dụng PUT -->
 
             <div class="form-group">
                 <label for="name">Tên Bệnh Nhân</label>
@@ -24,6 +24,15 @@
                     <option value="M" {{ $patient->sex == 'M' ? 'selected' : '' }}>Nam</option>
                     <option value="F" {{ $patient->sex == 'F' ? 'selected' : '' }}>Nữ</option>
                     <option value="O" {{ $patient->sex == 'O' ? 'selected' : '' }}>Khác</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Trạng Thái</label>
+                <select class="form-control" name="status" required>
+                    <option value="Đợi khám" {{ $patient->status == 'Đợi khám' ? 'selected' : '' }}>Đợi khám</option>
+                    <option value="Đang khám" {{ $patient->status == 'Đang khám' ? 'selected' : '' }}>Đang khám</option>
+                    <option value="Đã khám" {{ $patient->status == 'Đã khám' ? 'selected' : '' }}>Đã khám</option>
                 </select>
             </div>
 

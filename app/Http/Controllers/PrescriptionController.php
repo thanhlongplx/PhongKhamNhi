@@ -21,7 +21,7 @@ class PrescriptionController extends Controller
     public function create()
     {
         $patients = Patient::all();
-        $doctors = Employee::where('position', 'Bác sĩ')->get();
+        $doctors = Employee::where('position', 'Doctor')->get();
 
         return view('prescriptions.create', compact('patients', 'doctors'));
     }
@@ -84,6 +84,6 @@ class PrescriptionController extends Controller
         $prescription = Prescription::findOrFail($id);
         $prescription->delete(); // Xóa đơn thuốc
 
-        return redirect()->route('prescriptions.index')->with('success', 'Đơn thuốc đã được xóa thành công.');
+        return redirect()->route('prescriptions')->with('success', 'Đơn thuốc đã được xóa thành công.');
     }
 }

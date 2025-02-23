@@ -1,59 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Danh Sách Bệnh Nhân</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPatientModal">
+    <div class="container">
+        <h2>Danh Sách Bệnh Nhân</h2>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPatientModal">
             Thêm Bệnh Nhân
         </button>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Tên</th>
-                <th>Ngày Sinh</th>
-                <th>Giới Tính</th>
-                <th>Chiều Cao</th>
-                <th>Cân Nặng</th>
-                <th>Tên Phụ Huynh</th>
-                <th>Địa Chỉ</th>
-                <th>Hành Động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($patients as $patient)
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ $patient->name }}</td>
-                    <td>{{ $patient->date_of_birth}}</td>
-                    <td>{{ $patient->sex }}</td>
-                    <td>{{ $patient->height }}</td>
-                    <td>{{ $patient->weight }}</td>
-                    <td>{{ $patient->parent_name }}</td>
-                    <td>{{ $patient->address }}</td>
-                    <td>
-                        <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
-                        <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
-                        </form>
-                    </td>
+                    <th>Tên</th>
+                    <th>Ngày Sinh</th>
+                    <th>Giới Tính</th>
+                    <th>Chiều Cao</th>
+                    <th>Cân Nặng</th>
+                    <th>Tên Phụ Huynh</th>
+                    <th>Địa Chỉ</th>
+                    <th>Trạng thái</th>
+                    <th>Hành Động</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($patients as $patient)
+                    <tr>
+                        <td>{{ $patient->name}}</td>
+                        <td>{{ $patient->date_of_birth}}</td>
+                        <td>{{ $patient->sex }}</td>
+                        <td>{{ $patient->height }}</td>
+                        <td>{{ $patient->weight }}</td>
+                        <td>{{ $patient->parent_name }}</td>
+                        <td>{{ $patient->address }}</td>
+                        <td>{{ $patient->status }}</td>
+                        <td>
+                            <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
+                            <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    {{ $patients->links() }} <!-- Phân trang -->
-</div>
+        {{ $patients->links() }} <!-- Phân trang -->
+    </div>
 @endsection
 
 <!-- Modal Thêm Bệnh Nhân -->
-<div class="modal fade" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+<div class="modal fade" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -96,6 +100,15 @@
                     <div class="form-group">
                         <label for="address">Địa Chỉ</label>
                         <input type="text" class="form-control" name="address">
+                    </div>
+                    <!-- Thêm dropdown trạng thái -->
+                    <div class="form-group">
+                        <label for="status">Trạng Thái</label>
+                        <select class="form-control" name="status" required>
+                            <option value="Đợi khám">Đợi khám</option>
+                            <option value="Đang khám">Đang khám</option>
+                            <option value="Đã khám">Đã khám</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="medical_history">Lịch Sử Bệnh</label>

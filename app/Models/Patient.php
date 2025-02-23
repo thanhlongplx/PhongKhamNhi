@@ -18,6 +18,7 @@ class Patient extends Model
         'weight',           // Cân nặng
         'parent_name',      // Tên phụ huynh
         'address',          // Địa chỉ
+        'status',
         'medical_history',  // Lịch sử bệnh
     ];
    

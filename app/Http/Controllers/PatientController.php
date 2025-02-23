@@ -28,6 +28,7 @@ class PatientController extends Controller
             'weight' => 'required|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
+            'status' => 'required|in:Đợi khám,Đang khám,Đã khám',
             'medical_history' => 'nullable|string',
         ]);
 
@@ -36,10 +37,16 @@ class PatientController extends Controller
     }
 
     // Hiển thị form sửa bệnh nhân
+
     public function edit($id)
     {
-        $patients = Patient::findOrFail($id);
-        return view('patients.index', compact('patients'));
+        $patient = Patient::find($id); // Hoặc sử dụng findOrFail để tự động xử lý lỗi
+
+        if (!$patient) {
+            return redirect()->route('patients')->with('error', 'Bệnh nhân không tồn tại.');
+        }
+
+        return view('patients.edit', compact('patient'));
     }
 
     // Cập nhật thông tin bệnh nhân
@@ -53,6 +60,7 @@ class PatientController extends Controller
             'weight' => 'nullable|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
+            'status' => 'required|in:Đợi khám,Đang khám,Đã khám',
             'medical_history' => 'nullable|string',
         ]);
 
@@ -65,10 +73,11 @@ class PatientController extends Controller
             'weight',
             'parent_name',
             'address',
+            'status',
             'medical_history'
         ]));
 
-        return redirect()->route('patients.index')->with('success', 'Cập nhật thông tin bệnh nhân thành công.');
+        return redirect()->route('patients')->with('success', 'Cập nhật thông tin bệnh nhân thành công.');
     }
 
     // Xóa bệnh nhân
