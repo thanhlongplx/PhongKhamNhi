@@ -97,10 +97,11 @@ Route::middleware(['auth'])->group(function () {
         return view('home'); // Tạo view home.blade.php
     })->name('home');
 
-    
+
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     // Các route khác sử dụng layout
+    Route::get('/welcome', [AuthController::class, 'showWelcomePage'])->name('welcome');
     Route::get('/staffs', [EmployeeController::class, 'index'])->name('staffs');
     Route::get('/patients', [PatientController::class, 'index'])->name('patients');
     Route::get('/medications', [MedicationController::class, 'index'])->name('medications');
@@ -114,3 +115,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+
+//Phân quyền
+

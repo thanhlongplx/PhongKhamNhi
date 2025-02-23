@@ -10,14 +10,16 @@
     <meta name="author" content="">
 
     <title>
-        {{ Auth::check() ? Auth::user()->role : 'Nguoidung' }}
+        {{ Auth::check() ? Auth::user()->role : 'Chưa đăng nhập' }}
     </title>
 
     <!-- Custom fonts for this template-->
     <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
     <!-- Custom styles for this template-->
     <link href="{{asset('css/sb-admin-2.min.css')}}" rel="stylesheet">
@@ -33,7 +35,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/welcome">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -45,9 +47,9 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="/welcome">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+                    <span>Trang chủ</span></a>
             </li>
 
             <!-- Divider -->
@@ -68,13 +70,30 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Quản lí phòng khám</h6>
-                        <a class="collapse-item" href="/staffs">Danh sách nhân viên </a>
-                        <a class="collapse-item" href="/patients">Danh sách bệnh nhân </a>
-                        <a class="collapse-item" href="/medications">Danh sách thuốc</a>
-                        <a class="collapse-item" href="/users">Danh sách người dùng</a>
-                        <a class="collapse-item" href="/prescription-details">Chi tiết đơn thuốc</a>
-                        <a class="collapse-item" href="/medical_records">Hồ sơ bệnh án</a>
-                        <a class="collapse-item" href="/prescriptions">Danh sách đơn thuốc</a>
+                        @if(Auth::check())
+                                                @php
+                                                    $role = Auth::user()->role;
+                                                @endphp
+
+                                                @if(in_array($role, ['clinic_manager', 'admin']))
+                                                    <a class="collapse-item" href="/staffs">Danh sách nhân viên</a>
+                                                @endif
+
+                                                @if(in_array($role, ['nurse', 'doctor', 'clinic_manager']))
+                                                    <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
+                                                @endif
+
+                                                @if($role === 'clinic_manager')
+                                                    <a class="collapse-item" href="/medications">Quản lí thuốc</a>
+                                                    <a class="collapse-item" href="/users">Quản lí người dùng</a>
+                                                @endif
+
+                                                @if(in_array($role, ['doctor', 'clinic_manager', 'nurse']))
+                                                    <a class="collapse-item" href="/prescription-details">Quản lí chi tiết đơn thuốc</a>
+                                                    <a class="collapse-item" href="/medical_records">Quản lí hồ sơ bệnh án</a>
+                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
+                                                @endif
+                        @endif
                         <!-- Đường dẫn đến danh sách đơn thuốc -->
                     </div>
                 </div>
@@ -328,7 +347,7 @@
                                         <div class="small text-gray-500">Chicken the Dog · 2w</div>
                                     </div>
                                 </a>
-                                
+
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
                             </div>
                         </li>
@@ -340,7 +359,7 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::check() ? Auth::user()->role : 'role' }}</span>
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::check() ? (Auth::user()->role === 'nurse' ? 'Điều dưỡng' : (Auth::user()->role === 'doctor' ? 'Bác sĩ' : (Auth::user()->role === 'admin' ? 'Quản trị viên' : (Auth::user()->role === 'clinic_manager' ? 'Quản lý phòng khám' : 'Vai Trò')))) : 'Chưa đăng nhập' }}</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -385,7 +404,13 @@
 
                         <!-- Area Chart -->
                         <div class="col-xl-12 col-lg-12">
-                            @yield('content')
+                            @if(Auth::check())
+                                <!-- Nếu người dùng đã đăng nhập, hiển thị nội dung chính -->
+                                @yield('content')
+                            @else
+                                <!-- Nếu người dùng chưa đăng nhập, hiển thị nội dung login -->
+                                @yield('contentLogin')
+                            @endif
                             <!-- ChangeChange -->
                         </div>
 
@@ -401,7 +426,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; PhongKhamNhi 2025</span>
                     </div>
                 </div>
             </footer>

@@ -18,7 +18,11 @@ class AuthController extends Controller
     // Hiển thị form đăng nhập
     public function showLoginForm()
     {
-        return view('auth.login');
+        if (Auth::check()) {
+            return redirect()->route('welcome'); // Đổi 'welcome' thành route tương ứng của bạn
+        }
+
+        return view('auth.login'); // Tên view của bạn
     }
 
     // Xử lý đăng nhập
@@ -33,7 +37,7 @@ class AuthController extends Controller
         // Kiểm tra thông tin đăng nhập
         if (Auth::attempt($credentials)) {
             // Đăng nhập thành công
-            return redirect()->intended('staffs'); // Redirect đến trang bạn muốn
+            return redirect()->intended('welcome'); // Redirect đến trang bạn muốn
         }
 
         // Đăng nhập thất bại
@@ -47,5 +51,9 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login'); // Chuyển hướng về trang đăng nhập
+    }
+    public function showWelcomePage()
+    {
+        return view('welcome');
     }
 }
