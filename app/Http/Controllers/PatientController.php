@@ -28,7 +28,9 @@ class PatientController extends Controller
             'weight' => 'required|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'status' => 'required|in:Đợi khám,Đang khám,Đã khám',
+            'status' => 'required|in:Đợi khám,Đang khám,Đã khám,Hủy khám',
+            'phone_number' => 'required|string|max:10',
+            'id_cccd' => 'required|string|max:12',
             'medical_history' => 'nullable|string',
         ]);
 
@@ -60,7 +62,9 @@ class PatientController extends Controller
             'weight' => 'nullable|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'status' => 'required|in:Đợi khám,Đang khám,Đã khám',
+            'status' => 'required|in:Đợi khám,Đang khám,Đã khám,Hủy khám',
+            'phone_number' => 'required|string|max:10',
+            'id_cccd' => 'required|string|max:12',
             'medical_history' => 'nullable|string',
         ]);
 
@@ -74,6 +78,8 @@ class PatientController extends Controller
             'parent_name',
             'address',
             'status',
+            'phone_number',
+            'id_cccd',
             'medical_history'
         ]));
 

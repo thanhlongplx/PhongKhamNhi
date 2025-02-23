@@ -22,6 +22,7 @@ class Prescription extends Model
     {
         return $this->belongsTo(Patient::class, 'patient_id');
     }
+   
 
     // Mối quan hệ với model Employee (Bác sĩ)
     public function doctor()
@@ -34,4 +35,8 @@ class Prescription extends Model
     {
         return $this->belongsTo(MedicalRecord::class, 'medical_record_id');
     }
+    public function details()
+{
+    return $this->hasMany(PrescriptionDetail::class);
+}
 }

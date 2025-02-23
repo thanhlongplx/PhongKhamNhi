@@ -46,6 +46,14 @@
                         <input type="text" class="form-control" name="address">
                     </div>
                     <div class="form-group">
+                        <label for="phone_number">Số điện thoại</label>
+                        <input type="text" class="form-control" name="phone_number">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_cccd">Căn cước công dân</label>
+                        <input type="text" class="form-control" name="id_cccd">
+                    </div>
+                    <div class="form-group">
                         <label for="medical_history">Lịch Sử Bệnh</label>
                         <textarea class="form-control" name="medical_history"></textarea>
                     </div>

@@ -19,9 +19,11 @@ class Patient extends Model
         'parent_name',      // Tên phụ huynh
         'address',          // Địa chỉ
         'status',
+        'phone_number',
+        'id_cccd',
         'medical_history',  // Lịch sử bệnh
     ];
-   
+
     // Quan hệ một-nhiều với Prescription
     public function prescriptions()
     {

@@ -38,11 +38,11 @@
                         <td>
                             <a href="{{ route('prescription_details.edit', $prescription->id) }}"
                                 class="btn btn-warning">Sửa</a>
-                            <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                            <form action="{{ route('prescription_details.destroy', $prescription->id) }}" method="POST"
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Xóa</button>
+                                <button  onclick="return confirm('Bạn có chắc chắn muốn xóa không?');" type="submit" class="btn btn-danger">Xóa</button>
                             </form>
                         </td>
                     </tr>

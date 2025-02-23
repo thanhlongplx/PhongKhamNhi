@@ -47,8 +47,8 @@
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}" data-name="{{ $user->name }}"
                                             data-role="{{ $user->role }}">
-                                            {{ $user->id }}| 
-                                            {{ $user->name }}| 
+                                            {{ $user->id }}|
+                                            {{ $user->name }}|
                                             {{ $user->email }}
                                         </option>
                                     @endforeach
@@ -110,12 +110,13 @@
                         @method('PUT')
                         <div class="modal-body">
                             <div class="form-group">
-                                <label for="position">Chức vụ</label>
+                                <label for="position">Chức Vụ</label>
                                 <select name="position" id="position" class="form-control" required>
                                     <option value="">Chọn chức vụ</option>
                                     <option value="Doctor">Doctor</option>
                                     <option value="Nurse">Nurse</option>
                                     <option value="Clinic Manager">Clinic Manager</option>
+                                    <!-- Thêm các chức vụ khác nếu cần -->
                                 </select>
                             </div>
                             <div class="form-group">
@@ -140,10 +141,11 @@
             function editEmployee(id, position, department, phone_number) {
                 // Cập nhật đường dẫn cho form
                 document.getElementById('editEmployeeForm').action = "/employees/" + id;
+
                 // Cập nhật các trường trong modal
-                document.getElementById('position').value = position;
-                document.getElementById('department').value = department;
-                document.getElementById('phone_number').value = phone_number;
+                document.getElementById('position').value = position; // Cập nhật chức vụ
+                document.getElementById('department').value = department; // Cập nhật phòng ban
+                document.getElementById('phone_number').value = phone_number; // Cập nhật số điện thoại
             }
         </script>
 

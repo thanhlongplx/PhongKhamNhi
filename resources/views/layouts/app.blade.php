@@ -365,6 +365,7 @@
                                 <span
                                     class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::check() ? (Auth::user()->role === 'nurse' ? 'Điều dưỡng' : (Auth::user()->role === 'doctor' ? 'Bác sĩ' : (Auth::user()->role === 'admin' ? 'Quản trị viên' : (Auth::user()->role === 'clinic_manager' ? 'Quản lý phòng khám' : 'Vai Trò')))) : 'Chưa đăng nhập' }}</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                <!-- cần sửa -->
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -382,10 +383,12 @@
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
+                                @if( Auth::check())
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
+                                @endif
                             </div>
                         </li>
 

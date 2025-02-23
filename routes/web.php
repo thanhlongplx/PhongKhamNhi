@@ -64,16 +64,24 @@ Route::resource('prescriptions', PrescriptionController::class);
 // Routes cho chi tiết đơn thuốc
 Route::get('/prescription-details', [PrescriptionDetailController::class, 'index'])->name('prescription_details.index');
 Route::resource('prescription_details', PrescriptionDetailController::class);
+Route::get('/prescription/details/create/{prescriptionId}', [PrescriptionDetailController::class, 'create'])->name('prescription_details.create');
+Route::post('/prescription/details/store', [PrescriptionDetailController::class, 'store'])->name('prescription_details.store');
+Route::delete('/prescription_details/{id}', [PrescriptionDetailController::class, 'destroy'])->name('prescription_details.destroy');
+Route::get('/prescription_details/{id}/edit', [PrescriptionDetailController::class, 'edit'])->name('prescription_details.edit');
+
 
 
 // Routes cho hồ sơ bệnh án
-Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
+Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical_records.index');
+Route::get('/medical_records/{id}/edit', [MedicalRecordController::class, 'edit'])->name('medical_records.edit');
+Route::put('/medical_records/{id}', [MedicalRecordController::class, 'update'])->name('medical_records.update');
 // Routes cho lịch hẹn
 Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
 Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
 Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('appointments.show');
 Route::put('/appointments/{id}', [AppointmentController::class, 'update'])->name('appointments.update');
 Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+
 
 // Routes cho hóa đơn
 Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
