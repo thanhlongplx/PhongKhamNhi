@@ -77,6 +77,7 @@ Route::get('/prescription_details/{id}/edit', [PrescriptionDetailController::cla
 Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical_records.index');
 Route::get('/medical_records/{id}/edit', [MedicalRecordController::class, 'edit'])->name('medical_records.edit');
 Route::put('/medical_records/{id}', [MedicalRecordController::class, 'update'])->name('medical_records.update');
+Route::delete('medical_records/{id}', [MedicalRecordController::class, 'destroy'])->name('medical_records.destroy');
 // Routes cho lịch hẹn
 Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
 Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');

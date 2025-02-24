@@ -25,4 +25,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class, 'user_id', 'id'); // Cập nhật để liên kết với user_id
     }
+    
+    // Định nghĩa mối quan hệ với Prescription
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'employee_id'); // 'employee_id' là khóa ngoại
+    }
 }

@@ -38,10 +38,15 @@ class PrescriptionController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'date' => 'required|date',
             'notes' => 'nullable|string',
+            'medication_id' => 'required|array', // Đảm bảo đây là mảng
             'medication_id.*' => 'required|exists:medications,id',
+            'dosage' => 'required|array', // Đảm bảo đây là mảng
             'dosage.*' => 'required|string',
+            'frequency' => 'required|array', // Đảm bảo đây là mảng
             'frequency.*' => 'required|string',
+            'usage_instructions' => 'nullable|array', // Đảm bảo đây là mảng
             'usage_instructions.*' => 'nullable|string',
+            'quantity' => 'required|array', // Đảm bảo đây là mảng
             'quantity.*' => 'required|integer|min:1',
         ]);
 
@@ -61,22 +66,33 @@ class PrescriptionController extends Controller
             'date' => $request->date,
             'notes' => $request->notes,
             'medical_record_id' => $medicalRecord->id, // Lưu trường medical_record_id tự động
+
         ]);
 
         // Lưu các chi tiết đơn thuốc
-        foreach ($request->medication_id as $index => $medicationId) {
-            PrescriptionDetail::create([
-                'prescription_id' => $prescription->id,
-                'medication_id' => $medicationId,
-                'dosage' => $request->dosage[$index],
-                'frequency' => $request->frequency[$index],
-                'quantity' => $request->quantity[$index],
-                'total_price' => $request->total_price[$index], // Lưu giá tổng
-                'usage_instructions' => $request->usage_instructions[$index] ?? null,
-            ]);
+        $medicationIds = $request->medication_id ?? []; // Đảm bảo biến luôn là mảng
+        $dosages = $request->dosage ?? [];
+        $frequencies = $request->frequency ?? [];
+        $quantities = $request->quantity ?? [];
+        $totalPrices = $request->total_price ?? [];
+        $usageInstructions = $request->usage_instructions ?? [];
+
+        foreach ($medicationIds as $index => $medicationId) {
+            // Kiểm tra xem chỉ số có tồn tại trong các mảng khác hay không
+            if (isset($dosages[$index], $frequencies[$index], $quantities[$index])) {
+                PrescriptionDetail::create([
+                    'prescription_id' => $prescription->id,
+                    'medication_id' => $medicationId,
+                    'dosage' => $dosages[$index],
+                    'frequency' => $frequencies[$index],
+                    'quantity' => $quantities[$index],
+                    'total_price' => $totalPrices[$index] ?? null, // Lưu giá tổng nếu có
+                    'usage_instructions' => $usageInstructions[$index] ?? null,
+                ]);
+            }
         }
 
-        return redirect()->route('medical_records.index')->with('success', 'Đơn thuốc đã được thêm thành công!');
+        return redirect()->route('prescriptions')->with('success', 'Đơn thuốc đã được thêm thành công!');
     }
 
     // Hiển thị form chỉnh sửa đơn thuốc
@@ -95,7 +111,7 @@ class PrescriptionController extends Controller
     public function update(Request $request, $id)
     {
         // Tìm đơn thuốc theo ID
-        $prescription = Prescription::findOrFail($id);
+        $prescription = Prescription::with('details')->findOrFail($id);
 
         // Cập nhật thông tin đơn thuốc chính
         $prescription->patient_id = $request->input('patient_id');
@@ -104,30 +120,34 @@ class PrescriptionController extends Controller
         $prescription->notes = $request->input('notes');
         $prescription->save(); // Lưu thông tin đơn thuốc
 
-        // Cập nhật chi tiết đơn thuốc
-        $medicationIds = $request->input('medication_id');
-        $dosages = $request->input('dosage');
-        $frequencies = $request->input('frequency');
-        $quantities = $request->input('quantity');
-        $totalPrices = $request->input('total_price');
-        $usageInstructions = $request->input('usage_instructions');
-
         // Xóa tất cả chi tiết cũ trước khi lưu mới
         $prescription->details()->delete();
 
         // Thêm chi tiết mới
+        $medicationIds = $request->input('medication_id') ?? []; // Đảm bảo biến luôn là mảng
+        $dosages = $request->input('dosage') ?? [];
+        $frequencies = $request->input('frequency') ?? [];
+        $quantities = $request->input('quantity') ?? [];
+        $totalPrices = $request->input('total_price') ?? [];
+        $usageInstructions = $request->input('usage_instructions') ?? [];
+
+        // Lưu thời gian cập nhật
+
+
         for ($i = 0; $i < count($medicationIds); $i++) {
-            $prescription->details()->create([
-                'medication_id' => $medicationIds[$i],
-                'dosage' => $dosages[$i],
-                'frequency' => $frequencies[$i],
-                'quantity' => $quantities[$i],
-                'total_price' => $totalPrices[$i],
-                'usage_instructions' => $usageInstructions[$i],
-            ]);
+            if (!empty($medicationIds[$i])) { // Kiểm tra không có giá trị rỗng
+                $prescription->details()->create([
+                    'medication_id' => $medicationIds[$i],
+                    'dosage' => $dosages[$i],
+                    'frequency' => $frequencies[$i],
+                    'quantity' => $quantities[$i],
+                    'total_price' => $totalPrices[$i],
+                    'usage_instructions' => $usageInstructions[$i],
+                    'updated_at' => now(), // Cập nhật thời gian
+                ]);
+            }
         }
 
-        // Chuyển hướng người dùng hoặc trả về thông báo thành công
         return redirect()->route('prescriptions')->with('success', 'Cập nhật đơn thuốc thành công!');
     }
 

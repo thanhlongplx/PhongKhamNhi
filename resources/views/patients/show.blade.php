@@ -25,9 +25,9 @@
                     </div>
                 </div>
 
-                <h5 class="mt-4">Đơn Thuốc</h5>
+                <h5 class="mt-4">Hồ sơ bệnh án</h5>
                 @if($prescriptions->isEmpty())
-                    <p>Không có đơn thuốc nào cho bệnh nhân này.</p>
+                    <p>Không có hồ sơ nào cho bệnh nhân này.</p>
                 @else
                     @foreach($prescriptions as $prescription)
                         <div class="border p-3 mb-3">

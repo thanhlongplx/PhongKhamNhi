@@ -48,6 +48,8 @@ class PrescriptionDetailController extends Controller
         $prescriptionDetails = PrescriptionDetail::with(['patient', 'prescription', 'medication',])->get(); // Lấy tất cả dữ liệu
 
         return view('prescription_details.index', compact('prescriptionDetails')); // Sử dụng compact để truyền dữ liệu
+        $prescriptions = Prescription::all();
+        return view('prescription_details.index', compact('prescriptions')); // Truyền dữ liệu vào view
     }
     public function edit($id)
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecord; // Đảm bảo import model đúng
+use App\Models\Prescription;
 use Illuminate\Http\Request;
 
 class MedicalRecordController extends Controller
@@ -11,8 +12,9 @@ class MedicalRecordController extends Controller
     public function index()
     {
         $medicalRecords = MedicalRecord::with(['prescriptions', 'patient'])->get(); // Lấy hồ sơ kèm thông tin bệnh nhân
+        $prescriptions = Prescription::all();
 
-        return view('medical_records.index', compact('medicalRecords')); // Sử dụng compact để truyền dữ liệu
+        return view('medical_records.index', compact('medicalRecords', 'prescriptions')); // Sử dụng compact để truyền dữ liệu
     }
 
     // Hiển thị form chỉnh sửa hồ sơ bệnh án
@@ -47,5 +49,17 @@ class MedicalRecordController extends Controller
 
         // Chuyển hướng về trang danh sách hoặc trang chi tiết với thông báo thành công
         return redirect()->route('medical_records.index')->with('success', 'Hồ sơ bệnh án đã được cập nhật thành công!');
+    }
+    // Xóa hồ sơ bệnh án
+    public function destroy($id)
+    {
+        // Tìm hồ sơ bệnh án theo ID
+        $medicalRecord = MedicalRecord::findOrFail($id);
+
+        // Xóa hồ sơ bệnh án
+        $medicalRecord->delete();
+
+        // Chuyển hướng về trang danh sách với thông báo thành công
+        return redirect()->route('medical_records.index')->with('success', 'Hồ sơ bệnh án đã được xóa thành công!');
     }
 }

@@ -9,12 +9,26 @@ use App\Models\Patient;
 class PatientController extends Controller
 {
     // Lấy danh sách tất cả bệnh nhân
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Patient::paginate(10);
+        // Khởi tạo truy vấn
+        $query = Patient::query();
+
+        // Kiểm tra nếu có từ khóa tìm kiếm
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%")
+                    ->orWhere('id_cccd', 'like', "%{$search}%")
+                    ->orWhere('parent_name', 'like', "%{$search}%"); // Thêm tìm kiếm theo tên phụ huynh
+            });
+        }
+
+        // Phân trang kết quả tìm kiếm
+        $patients = $query->paginate(10);
+
         return view('patients.index', compact('patients'));
-        $doctors = Employee::paginate(10);
-        return view('patients.index', compact('doctors'));
     }
 
     // Thêm bệnh nhân mới
@@ -87,11 +101,11 @@ class PatientController extends Controller
     }
     // Xem view xem hồ sơ bệnh án
     public function show($id)
-{
-    $patient = Patient::findOrFail($id);
-    $prescriptions = $patient->prescriptions()->with('medicalRecord')->get();
-    return view('patients.show', compact('patient', 'prescriptions'));
-}
+    {
+        $patient = Patient::findOrFail($id);
+        $prescriptions = $patient->prescriptions()->with('medicalRecord')->get();
+        return view('patients.show', compact('patient', 'prescriptions'));
+    }
 
     // Xóa bệnh nhân
     public function destroy($id)

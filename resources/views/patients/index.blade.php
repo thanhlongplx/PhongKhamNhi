@@ -3,62 +3,95 @@
 @section('content')
     <div class="container">
         <h2 class="text-center text-info mb-4">Danh Sách Bệnh Nhân</h2>
+
+        <!-- Nút thêm bệnh nhân -->
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPatientModal">
             Thêm Bệnh Nhân
         </button>
 
+        <!-- Form tìm kiếm -->
+        <div class="mb-3">
+            <form action="{{ route('patients') }}" method="GET" class="form-inline">
+                <input type="text" name="search" class="form-control mr-2" placeholder="Tìm kiếm bệnh nhân...">
+                <button type="submit" class="btn btn-primary">Tìm Kiếm hoặc đặt lại</button>
+            </form>
+        </div>
+
+        <!-- Thông báo thành công -->
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr class="table-primary">
-                    <th>Tên</th>
-                    <th>Ngày Sinh</th>
-                    <th>Giới Tính</th>
-                    <th>Chiều Cao</th>
-                    <th>Cân Nặng</th>
-                    <th>Tên Phụ Huynh</th>
-                    <th>Trạng thái</th>
-                    <th>Địa chỉ</th>
-                    <th>SDT</th>
-                    <th>CCCD</th>
-                    <th>Hành Động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($patients as $patient)
-                    <tr>
-                        <td>{{ $patient->name }}</td>
-                        <td>{{ $patient->date_of_birth }}</td>
-                        <td>{{ $patient->sex }}</td>
-                        <td>{{ $patient->height }}</td>
-                        <td>{{ $patient->weight }}</td>
-                        <td>{{ $patient->parent_name }}</td>
-                        <td>{{ $patient->status }}</td>
-                        <td>{{ $patient->address }}</td>
-                        <td>{{ $patient->phone_number }}</td>
-                        <td>{{ $patient->id_cccd }}</td>
-                        <td>
-                            <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
-                            <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
-                            </form>
-                            <a href="{{ route('patients.show', $patient->id) }}" class="btn btn-info btn-sm">Xem Hồ Sơ</a>
-                        </td>
-                       
+        <!-- Bảng danh sách bệnh nhân -->
+        @if ($patients->count() > 0)
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="table-primary">
+                        <th>Tên</th>
+                        <th>Ngày Sinh</th>
+                        <th>Giới Tính</th>
+                        <th>Chiều Cao</th>
+                        <th>Cân Nặng</th>
+                        <th>Tên Phụ Huynh</th>
+                        <th>Trạng thái</th>
+                        <th>Địa chỉ</th>
+                        <th>SDT</th>
+                        <th>CCCD</th>
+                        <th>Hành Động</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($patients as $patient)
+                        <tr>
+                            <td>{{ $patient->name }}</td>
+                            <td>{{ $patient->date_of_birth }}</td>
+                            <td>{{ $patient->sex ==='F'? 'Nữ': 'Nam' }}</td>
+                            <td>{{ $patient->height }}</td>
+                            <td>{{ $patient->weight }}</td>
+                            <td>{{ $patient->parent_name }}</td>
+                            <td>{{ $patient->status }}</td>
+                            <td>{{ $patient->address }}</td>
+                            <td>{{ $patient->phone_number }}</td>
+                            <td>{{ $patient->id_cccd }}</td>
+                            <td>
+                                @if (auth()->user()->role==='admin' || (auth()->user()->role === 'clinic_manager' && $patient->created_at >= now()->subDays(30)))
+                                    <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
+                                    <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                    </form>
+                                @elseif (auth()->user()->role==='doctor' ||  auth()->user()->role ==='nurse') 
+                                    @if ($patient->created_at->isToday())
+                                        <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
+                                        <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                        </form>
+                                    @else
+                                        <span class="text-muted">Chỉ chỉnh sửa bệnh nhân tạo trong ngày</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">Sau 30 ngày, quản lí không thể chỉnh sửa</span>
+                                @endif
+                                <a href="{{ route('patients.show', $patient->id) }}" class="btn btn-info btn-sm">Xem Hồ Sơ</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-        {{ $patients->links() }} <!-- Phân trang -->
+            {{ $patients->links() }} <!-- Phân trang -->
+        @else
+            <tr>
+                <td colspan="11" class="text-center">Không tìm thấy bệnh nhân nào.</td>
+            </tr>
+        @endif
     </div>
 
     <!-- Modal Thêm Bệnh Nhân -->

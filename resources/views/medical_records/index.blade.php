@@ -14,12 +14,13 @@
                     <th>Tên Bệnh Nhân</th>
                     <th>Ngày Tạo</th>
                     <th>Ngày Cập Nhật</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($medicalRecords as $record)
                     <tr>
-                        <td>{{ $record->id }}</td> <!-- ID hồ sơ -->
+                        <td>HS{{ $record->id }}</td> <!-- ID hồ sơ -->
                         <td>{{ $record->visit_date }}</td> <!-- Ngày khám -->
                         <td>{{ $record->symptoms }}</td> <!-- Triệu chứng -->
                         <td>{{ $record->diagnosis }}</td> <!-- Chẩn đoán -->
@@ -33,6 +34,37 @@
                         </td> <!-- Tên bệnh nhân -->
                         <td>{{ $record->created_at }}</td> <!-- Ngày tạo -->
                         <td>{{ $record->updated_at }}</td> <!-- Ngày cập nhật -->
+                        <td>
+                            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'clinic_manager')
+                                <!-- Nếu là admin, luôn hiển thị nút sửa và xóa -->
+                                <a href="{{ route('medical_records.edit', $record->id) }}" class="btn btn-warning">Sửa</a>
+                                <form action="{{ route('medical_records.destroy', $record->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                </form>
+                            @elseif ((auth()->user()->role === 'doctor') && $record->created_at->isToday())
+                                <!-- Nếu là bác sĩ hoặc quản lý phòng khám và hồ sơ được tạo trong ngày -->
+                                @foreach ($record->prescriptions as $prescription)
+                                    @if (auth()->user()->employee->id === $prescription->employee_id)
+                                        <a href="{{ route('medical_records.edit', $record->id) }}" class="btn btn-warning">Sửa</a>
+                                        <form action="{{ route('medical_records.destroy', $record->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                        </form>
+                                    @endif
+                                @endforeach
+                            @elseif(auth()->user()->role === 'nurse')
+                                <span class="text-muted">Điều dưỡng không có quyền chỉnh sửa hồ sơ bệnh nhân</span>
+                            @else
+                                <span class="text-muted">Bác sĩ không sửa được hồ sơ sau 1 ngày</span>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

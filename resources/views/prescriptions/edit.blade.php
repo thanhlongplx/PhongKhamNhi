@@ -52,11 +52,12 @@
             </div>
 
             <h3 class="text-white text-center bg-primary p-1" style="height: 50px;">CHI TIẾT ĐƠN THUỐC</h3>
+
             <div id="medication-details">
                 @if ($prescription->details && count($prescription->details) > 0)
                     @foreach ($prescription->details as $index => $detail)
                         <div class="medication-detail mb-4">
-                            <h5 class="text-success">Thuốc {{ $index + 1 }}</h5>
+                            <h5 class="text-success">Chi tiết thuốc {{ $index + 1 }}</h5>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="medication_id_{{ $index }}">Thuốc:</label>
@@ -105,7 +106,19 @@
                 @endif
             </div>
 
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="quantity">Số lượng thuốc muốn thêm:</label>
+                    <input type="number" id="quantity" class="form-control" min="1" value="1" required>
+                </div>
+                <div class="form-group col-md-6 d-flex align-items-end">
+                    <button type="button" id="add-medications" class="btn btn-secondary">Thêm Chi Tiết Thuốc</button>
+                </div>
+            </div>
+
             @if (now()->isToday() && auth()->user()->id == $prescription->employee_id)
+                <button type="submit" class="btn btn-primary">Cập Nhật Đơn Thuốc</button>
+            @elseif(auth()->user()->role === 'admin')
                 <button type="submit" class="btn btn-primary">Cập Nhật Đơn Thuốc</button>
             @else
                 <button type="button" class="btn btn-secondary" disabled>Không thể chỉnh sửa</button>
@@ -127,3 +140,56 @@
         font-family: 'Comic Sans MS', cursive, sans-serif; /* Phông chữ vui nhộn */
     }
 </style>
+
+<script>
+    document.getElementById('add-medications').addEventListener('click', function () {
+        const quantity = document.getElementById('quantity').value;
+        const detailsContainer = document.getElementById('medication-details');
+
+        for (let i = 0; i < quantity; i++) {
+            const index = detailsContainer.children.length; // Đếm số lượng thuốc hiện có để tạo chỉ số mới
+
+            detailsContainer.innerHTML += `
+                <div class="medication-detail mb-4">
+                    <h5 class="text-success">Chi tiết thuốc ${index + 1}</h5>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="medication_id_${index}">Thuốc:</label>
+                            <select class="form-control bg-lightyellow" name="medication_id[]" id="medication_id_${index}" required>
+                                <option value="">Chọn Thuốc</option>
+                                @foreach($medications as $medication)
+                                    <option value="{{ $medication->id }}">{{ $medication->medicine_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="dosage_${index}">Liều lượng:</label>
+                            <input type="text" name="dosage[]" id="dosage_${index}" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="frequency_${index}">Tần suất:</label>
+                            <input type="text" name="frequency[]" id="frequency_${index}" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="quantity_${index}">Số lượng:</label>
+                            <input type="number" name="quantity[]" id="quantity_${index}" class="form-control" required min="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="total_price_${index}">Giá Tổng:</label>
+                            <input type="text" name="total_price[]" id="total_price_${index}" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="usage_instructions_${index}">Hướng dẫn sử dụng:</label>
+                            <input type="text" name="usage_instructions[]" id="usage_instructions_${index}" class="form-control">
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            `;
+        }
+    });
+</script>
