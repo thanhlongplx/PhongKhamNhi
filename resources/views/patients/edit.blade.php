@@ -40,6 +40,7 @@
                 <label for="status">Trạng Thái</label>
                 <select class="form-control" name="status" required>
                     <option value="Đợi khám" {{ $patient->status == 'Đợi khám' ? 'selected' : '' }}>Đợi khám</option>
+                    <option value="Tái khám" {{ $patient->status == 'Tái khám' ? 'selected' : '' }}>Tái khám</option>
                     <option value="Đang khám" {{ $patient->status == 'Đang khám' ? 'selected' : '' }}>Đang khám</option>
                     <option value="Đã khám" {{ $patient->status == 'Đã khám' ? 'selected' : '' }}>Đã khám</option>
                     <option value="Hủy khám" {{ $patient->status == 'Hủy khám' ? 'selected' : '' }}>Hủy khám</option>

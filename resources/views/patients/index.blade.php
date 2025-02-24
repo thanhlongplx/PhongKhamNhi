@@ -5,16 +5,16 @@
         <h2 class="text-center text-info mb-4">Danh Sách Bệnh Nhân</h2>
 
         <!-- Nút thêm bệnh nhân -->
-        @if(auth()-> user()-> role ==='doctor')
+        @if(auth()->user()->role === 'doctor')
         @else
-        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPatientModal">
-            Thêm Bệnh Nhân
-        </button>
+            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPatientModal">
+                Thêm Bệnh Nhân
+            </button>
         @endif
-        @if(auth()-> user()-> role ==='doctor')
-        <a href="/prescriptions" type="button" class="btn btn-primary mb-3" >
-            Bắt đầu khám chữa bệnh
-        </a>
+        @if(auth()->user()->role === 'doctor')
+            <a href="/prescriptions" type="button" class="btn btn-primary mb-3">
+                Bắt đầu khám chữa bệnh
+            </a>
         @endif
 
         <!-- Form tìm kiếm -->
@@ -55,7 +55,7 @@
                         <tr>
                             <td>{{ $patient->name }}</td>
                             <td>{{ $patient->date_of_birth }}</td>
-                            <td>{{ $patient->sex ==='F'? 'Nữ': 'Nam' }}</td>
+                            <td>{{ $patient->sex === 'F' ? 'Nữ' : 'Nam' }}</td>
                             <td>{{ $patient->height }}</td>
                             <td>{{ $patient->weight }}</td>
                             <td>{{ $patient->parent_name }}</td>
@@ -64,7 +64,7 @@
                             <td>{{ $patient->phone_number }}</td>
                             <td>{{ $patient->id_cccd }}</td>
                             <td>
-                                @if (auth()->user()->role==='admin' || (auth()->user()->role === 'clinic_manager' && $patient->created_at >= now()->subDays(30)))
+                                @if (auth()->user()->role === 'admin' || (auth()->user()->role === 'clinic_manager' && $patient->created_at >= now()->subDays(30)))
                                     <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
                                     <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
                                         @csrf
@@ -72,7 +72,7 @@
                                         <button type="submit" class="btn btn-danger btn-sm"
                                             onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
                                     </form>
-                                @elseif (auth()->user()->role==='doctor' ||  auth()->user()->role ==='nurse') 
+                                @elseif (auth()->user()->role === 'doctor' || auth()->user()->role === 'nurse') 
                                     @if ($patient->created_at->isToday())
                                         <a href="{{ route('patients.edit', $patient->id) }}" class="btn btn-warning btn-sm">Sửa</a>
                                         <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
@@ -187,8 +187,8 @@
                             <label for="status">Trạng Thái</label>
                             <select class="form-control" name="status" required>
                                 <option value="Đợi khám">Đợi khám</option>
-                                <option value="Đang khám">Đang khám</option>
-                                <option value="Đã khám">Đã khám</option>
+                                <option value="Tái khám">Tái khám</option>
+
                             </select>
                             @error('status')
                                 <div class="text-danger">{{ $message }}</div>

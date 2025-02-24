@@ -3,6 +3,9 @@
 @section('content')
     <div class="container">
         <h1>Danh Sách Hồ Sơ Bệnh Án</h1>
+        @if(auth()->user()-> role ==='doctor')
+        <a href="{{ route('prescriptions.create') }}" class="btn btn-primary">Tiếp tục khám(Quay lại tạo đơn thuốc)</a>
+        @endif
         <table class="table">
             <thead>
                 <tr>

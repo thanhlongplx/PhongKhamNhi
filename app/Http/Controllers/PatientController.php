@@ -21,6 +21,7 @@ class PatientController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('phone_number', 'like', "%{$search}%")
                     ->orWhere('id_cccd', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
                     ->orWhere('parent_name', 'like', "%{$search}%"); // Thêm tìm kiếm theo tên phụ huynh
             });
         }
@@ -42,7 +43,7 @@ class PatientController extends Controller
             'weight' => 'required|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'status' => 'required|in:Đợi khám,Đang khám,Đã khám,Hủy khám',
+            'status' => 'required|in:Đợi khám,Tái khám,Đang khám,Đã khám,Hủy khám',
             'phone_number' => 'required|string|max:10',
             'id_cccd' => 'required|string|max:12',
             'medical_history' => 'nullable|string',
@@ -76,7 +77,7 @@ class PatientController extends Controller
             'weight' => 'nullable|numeric',
             'parent_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'status' => 'required|in:Đợi khám,Đang khám,Đã khám,Hủy khám',
+            'status' => 'required|in:Đợi khám,Tái khám,Đang khám,Đã khám,Hủy khám',
             'phone_number' => 'required|string|max:10',
             'id_cccd' => 'required|string|max:12',
             'medical_history' => 'nullable|string',

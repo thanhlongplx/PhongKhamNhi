@@ -22,7 +22,7 @@ class PrescriptionController extends Controller
     // Hiển thị form thêm đơn thuốc
     public function create()
     {
-        $patients = Patient::where('status', 'Đợi khám')->get(); // Lấy bệnh nhân đang chờ khám
+        $patients = Patient::whereIn('status', ['Đợi khám', 'Tái khám'])->get();
         $doctors = Employee::where('position', 'Doctor')->get(); // Lấy danh sách bác sĩ
         $medications = Medication::all(); // Lấy danh sách thuốc
 

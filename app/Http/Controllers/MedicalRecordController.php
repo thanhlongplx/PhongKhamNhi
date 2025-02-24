@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecord; // Đảm bảo import model đúng
+use App\Models\Patient;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
 
@@ -46,6 +47,18 @@ class MedicalRecordController extends Controller
             'diagnosis' => $request->diagnosis,
             'treatment' => $request->treatment,
         ]);
+        // Cập nhật trạng thái bệnh nhân
+        // Tìm đơn thuốc liên quan
+        $prescription = Prescription::where('medical_record_id', $medicalRecord->id)->first();
+
+        if ($prescription) {
+            // Tìm bệnh nhân từ đơn thuốc
+            $patient = Patient::find($prescription->patient_id);
+            if ($patient) {
+                $patient->status = 'Đã khám'; // Cập nhật trạng thái
+                $patient->save(); // Lưu thay đổi
+            }
+        }
 
         // Chuyển hướng về trang danh sách hoặc trang chi tiết với thông báo thành công
         return redirect()->route('medical_records.index')->with('success', 'Hồ sơ bệnh án đã được cập nhật thành công!');
