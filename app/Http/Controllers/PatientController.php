@@ -85,6 +85,13 @@ class PatientController extends Controller
 
         return redirect()->route('patients')->with('success', 'Cập nhật thông tin bệnh nhân thành công.');
     }
+    // Xem view xem hồ sơ bệnh án
+    public function show($id)
+{
+    $patient = Patient::findOrFail($id);
+    $prescriptions = $patient->prescriptions()->with('medicalRecord')->get();
+    return view('patients.show', compact('patient', 'prescriptions'));
+}
 
     // Xóa bệnh nhân
     public function destroy($id)

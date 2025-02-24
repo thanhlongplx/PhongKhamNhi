@@ -50,7 +50,9 @@
                                 <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
                             </form>
+                            <a href="{{ route('patients.show', $patient->id) }}" class="btn btn-info btn-sm">Xem Hồ Sơ</a>
                         </td>
+                       
                     </tr>
                 @endforeach
             </tbody>

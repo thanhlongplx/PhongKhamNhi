@@ -43,6 +43,8 @@ Route::get('/patients', [PatientController::class, 'index'])->name('patients.ind
 Route::resource('patients', PatientController::class);
 Route::get('/patients/{id}/edit', [PatientController::class, 'edit'])->name('patients.edit');
 Route::post('/patients/{id}', [PatientController::class, 'update'])->name('patients.update');
+// Xem hồ sơ bệnh án của bệnh nhân
+Route::get('patients/{id}', [PatientController::class, 'show'])->name('patients.show');
 
 
 // Routes cho thuốc
