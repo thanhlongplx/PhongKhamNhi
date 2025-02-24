@@ -23,7 +23,7 @@ class PrescriptionController extends Controller
     public function create()
     {
         $patients = Patient::where('status', 'Đợi khám')->get(); // Lấy bệnh nhân đang chờ khám
-        $doctors = Employee::where('position', 'Bác sĩ')->get(); // Lấy danh sách bác sĩ
+        $doctors = Employee::where('position', 'Doctor')->get(); // Lấy danh sách bác sĩ
         $medications = Medication::all(); // Lấy danh sách thuốc
 
         return view('prescriptions.create', compact('patients', 'doctors', 'medications'));

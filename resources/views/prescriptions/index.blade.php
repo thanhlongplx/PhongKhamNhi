@@ -34,18 +34,30 @@
                             <td>{{ $prescription->notes }}</td>
                             <td>
                                 @if ($prescription->created_at->isToday())
-                                    @if (auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id)
+                                    @if ((auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id) || auth()->user()->role === 'admin')
                                         <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
-                                        <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                                            style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
                                         </form>
                                     @endif
-                                @endif
+                                @elseif(auth()->user()->role === 'admin')
+                                <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
+                                        <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                        </form>
+                                        @endif
                                 <br>
                                 @if (auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id && $prescription->created_at->isToday())
-                                    <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}" class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
+                                    <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
+                                        class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
                                 @endif
                             </td>
                         </tr>

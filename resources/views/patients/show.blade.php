@@ -12,7 +12,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <p><strong>Ngày Sinh:</strong> {{ $patient->date_of_birth }}</p>
-                        <p><strong>Giới Tính:</strong> {{ $patient->sex }}</p>
+                        <p><strong>Giới Tính:</strong> {{ $patient->sex === 'M' ? 'Nam' : 'Nữ'}}</p>
                         <p><strong>Chiều Cao:</strong> {{ $patient->height }} cm</p>
                         <p><strong>Cân Nặng:</strong> {{ $patient->weight }} kg</p>
                     </div>
@@ -30,13 +30,13 @@
                     <p>Không có đơn thuốc nào cho bệnh nhân này.</p>
                 @else
                     @foreach($prescriptions as $prescription)
-                    <div class="border p-3 mb-3">
-                        <p><strong>Mã Hồ Sơ Bệnh Án:</strong> {{ $prescription->medical_record_id }}</p>
-                        <p><strong>Ngày Khám:</strong> {{ $prescription->medicalRecord->visit_date }}</p>
-                        <p><strong>Triệu Chứng:</strong> {{ $prescription->medicalRecord->symptoms }}</p>
-                        <p><strong>Chẩn Đoán:</strong> {{ $prescription->medicalRecord->diagnosis }}</p>
-                        <p><strong>Phác Đồ Điều Trị:</strong> {{ $prescription->medicalRecord->treatment }}</p>
-                    </div>
+                        <div class="border p-3 mb-3">
+                            <p><strong>Mã Hồ Sơ Bệnh Án:</strong> HS{{ $prescription->medical_record_id }}</p>
+                            <p><strong>Ngày Khám:</strong> {{ $prescription->medicalRecord->visit_date }}</p>
+                            <p><strong>Triệu Chứng:</strong> {{ $prescription->medicalRecord->symptoms }}</p>
+                            <p><strong>Chẩn Đoán:</strong> {{ $prescription->medicalRecord->diagnosis }}</p>
+                            <p><strong>Phác Đồ Điều Trị:</strong> {{ $prescription->medicalRecord->treatment }}</p>
+                        </div>
                     @endforeach
                 @endif
             </div>
