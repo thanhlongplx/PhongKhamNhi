@@ -5,9 +5,17 @@
         <h2 class="text-center text-info mb-4">Danh Sách Bệnh Nhân</h2>
 
         <!-- Nút thêm bệnh nhân -->
+        @if(auth()-> user()-> role ==='doctor')
+        @else
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addPatientModal">
             Thêm Bệnh Nhân
         </button>
+        @endif
+        @if(auth()-> user()-> role ==='doctor')
+        <a href="/prescriptions" type="button" class="btn btn-primary mb-3" >
+            Bắt đầu khám chữa bệnh
+        </a>
+        @endif
 
         <!-- Form tìm kiếm -->
         <div class="mb-3">

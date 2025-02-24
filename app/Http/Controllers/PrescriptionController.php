@@ -38,60 +38,67 @@ class PrescriptionController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'date' => 'required|date',
             'notes' => 'nullable|string',
-            'medication_id' => 'required|array', // Đảm bảo đây là mảng
+            'medication_id' => 'required|array',
             'medication_id.*' => 'required|exists:medications,id',
-            'dosage' => 'required|array', // Đảm bảo đây là mảng
+            'dosage' => 'required|array',
             'dosage.*' => 'required|string',
-            'frequency' => 'required|array', // Đảm bảo đây là mảng
+            'frequency' => 'required|array',
             'frequency.*' => 'required|string',
-            'usage_instructions' => 'nullable|array', // Đảm bảo đây là mảng
+            'usage_instructions' => 'nullable|array',
             'usage_instructions.*' => 'nullable|string',
-            'quantity' => 'required|array', // Đảm bảo đây là mảng
+            'quantity' => 'required|array',
             'quantity.*' => 'required|integer|min:1',
         ]);
-
+    
         // Tạo hồ sơ y tế nếu chưa tồn tại
         $medicalRecord = MedicalRecord::firstOrCreate([
             'id' => $request->patient_id,
-            'visit_date' => now(), // Hoặc bạn có thể dùng $request->date
-            'symptoms' => $request->notes, // Sử dụng ghi chú làm triệu chứng (nếu cần)
-            'diagnosis' => null, // Có thể để trống hoặc gán giá trị khác
-            'treatment' => null, // Có thể để trống hoặc gán giá trị khác
+            'visit_date' => now(),
+            'symptoms' => $request->notes,
+            'diagnosis' => null,
+            'treatment' => null,
         ]);
-
+    
         // Tạo đơn thuốc
         $prescription = Prescription::create([
             'patient_id' => $request->patient_id,
             'employee_id' => $request->employee_id,
             'date' => $request->date,
             'notes' => $request->notes,
-            'medical_record_id' => $medicalRecord->id, // Lưu trường medical_record_id tự động
-
+            'medical_record_id' => $medicalRecord->id,
         ]);
-
+    
         // Lưu các chi tiết đơn thuốc
-        $medicationIds = $request->medication_id ?? []; // Đảm bảo biến luôn là mảng
+        $medicationIds = $request->medication_id ?? [];
         $dosages = $request->dosage ?? [];
         $frequencies = $request->frequency ?? [];
         $quantities = $request->quantity ?? [];
         $totalPrices = $request->total_price ?? [];
         $usageInstructions = $request->usage_instructions ?? [];
-
+    
         foreach ($medicationIds as $index => $medicationId) {
             // Kiểm tra xem chỉ số có tồn tại trong các mảng khác hay không
             if (isset($dosages[$index], $frequencies[$index], $quantities[$index])) {
+                // Tạo chi tiết đơn thuốc
                 PrescriptionDetail::create([
                     'prescription_id' => $prescription->id,
                     'medication_id' => $medicationId,
                     'dosage' => $dosages[$index],
                     'frequency' => $frequencies[$index],
                     'quantity' => $quantities[$index],
-                    'total_price' => $totalPrices[$index] ?? null, // Lưu giá tổng nếu có
+                    'total_price' => $totalPrices[$index] ?? null,
                     'usage_instructions' => $usageInstructions[$index] ?? null,
                 ]);
+    
+                // Cập nhật số lượng thuốc trong bảng medications
+                $medication = Medication::find($medicationId);
+                if ($medication) {
+                    $medication->stock_quantity -= $quantities[$index]; // Giảm số lượng
+                    $medication->save(); // Lưu thay đổi
+                }
             }
         }
-
+    
         return redirect()->route('prescriptions')->with('success', 'Đơn thuốc đã được thêm thành công!');
     }
 
