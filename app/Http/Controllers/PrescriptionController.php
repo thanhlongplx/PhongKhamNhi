@@ -15,8 +15,8 @@ class PrescriptionController extends Controller
     // Hiển thị danh sách đơn thuốc
     public function index()
     {
-        $prescriptions = Prescription::with(['patient', 'doctor', 'medicalRecord'])->paginate(10); // Lấy danh sách đơn thuốc
-        return view('prescriptions.index', compact('prescriptions')); // Truyền dữ liệu vào view
+        $prescriptions = Prescription::with(['patient', 'doctor', 'medicalRecord', 'details.medication'])->paginate(10);
+        return view('prescriptions.index', compact('prescriptions'));
     }
 
     // Hiển thị form thêm đơn thuốc
@@ -49,16 +49,18 @@ class PrescriptionController extends Controller
             'quantity' => 'required|array',
             'quantity.*' => 'required|integer|min:1',
         ]);
-    
+
         // Tạo hồ sơ y tế nếu chưa tồn tại
-        $medicalRecord = MedicalRecord::firstOrCreate([
-            'id' => $request->patient_id,
-            'visit_date' => now(),
-            'symptoms' => $request->notes,
-            'diagnosis' => null,
-            'treatment' => null,
-        ]);
-    
+        $medicalRecord = MedicalRecord::firstOrCreate(
+            ['id' => $request->patient_id],
+            [
+                'visit_date' => now(),
+                'symptoms' => $request->notes,
+                'diagnosis' => null,
+                'treatment' => null,
+            ]
+        );
+
         // Tạo đơn thuốc
         $prescription = Prescription::create([
             'patient_id' => $request->patient_id,
@@ -67,38 +69,35 @@ class PrescriptionController extends Controller
             'notes' => $request->notes,
             'medical_record_id' => $medicalRecord->id,
         ]);
-    
+
         // Lưu các chi tiết đơn thuốc
-        $medicationIds = $request->medication_id ?? [];
-        $dosages = $request->dosage ?? [];
-        $frequencies = $request->frequency ?? [];
-        $quantities = $request->quantity ?? [];
-        $totalPrices = $request->total_price ?? [];
-        $usageInstructions = $request->usage_instructions ?? [];
-    
-        foreach ($medicationIds as $index => $medicationId) {
+        foreach ($request->medication_id as $index => $medicationId) {
             // Kiểm tra xem chỉ số có tồn tại trong các mảng khác hay không
-            if (isset($dosages[$index], $frequencies[$index], $quantities[$index])) {
+            if (isset($request->dosage[$index], $request->frequency[$index], $request->quantity[$index])) {
                 // Tạo chi tiết đơn thuốc
                 PrescriptionDetail::create([
                     'prescription_id' => $prescription->id,
                     'medication_id' => $medicationId,
-                    'dosage' => $dosages[$index],
-                    'frequency' => $frequencies[$index],
-                    'quantity' => $quantities[$index],
-                    'total_price' => $totalPrices[$index] ?? null,
-                    'usage_instructions' => $usageInstructions[$index] ?? null,
+                    'dosage' => $request->dosage[$index],
+                    'frequency' => $request->frequency[$index],
+                    'quantity' => $request->quantity[$index],
+                    'total_price' => $request->total_price[$index] ?? null,
+                    'usage_instructions' => $request->usage_instructions[$index] ?? null,
                 ]);
-    
+
                 // Cập nhật số lượng thuốc trong bảng medications
                 $medication = Medication::find($medicationId);
                 if ($medication) {
-                    $medication->stock_quantity -= $quantities[$index]; // Giảm số lượng
-                    $medication->save(); // Lưu thay đổi
+                    if ($medication->stock_quantity >= $request->quantity[$index]) {
+                        $medication->stock_quantity -= $request->quantity[$index]; // Giảm số lượng
+                        $medication->save(); // Lưu thay đổi
+                    } else {
+                        return redirect()->back()->withErrors(['quantity' => 'Số lượng thuốc không đủ trong kho.']);
+                    }
                 }
             }
         }
-    
+
         return redirect()->route('prescriptions')->with('success', 'Đơn thuốc đã được thêm thành công!');
     }
 
@@ -166,4 +165,11 @@ class PrescriptionController extends Controller
 
         return redirect()->route('prescriptions')->with('success', 'Đơn thuốc đã được xóa thành công.');
     }
+    public function show($id)
+{
+    // Lấy đơn thuốc theo ID và eager load các quan hệ
+    $prescription = Prescription::with(['patient', 'doctor', 'medicalRecord', 'details.medication'])->findOrFail($id);
+    
+    return view('prescriptions.show', compact('prescription'));
+}
 }

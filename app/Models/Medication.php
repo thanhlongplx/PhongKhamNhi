@@ -25,4 +25,9 @@ class Medication extends Model
     {
         return $this->hasMany(PrescriptionDetail::class, 'medication_id', 'id'); // Cập nhật để sử dụng medication_id
     }
+    // Mô hình Medication
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class);
+    }
 }

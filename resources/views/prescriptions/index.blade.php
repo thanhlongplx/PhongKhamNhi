@@ -56,15 +56,21 @@
                                             onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
                                     </form>
                                 @endif
+
                                 <br>
-                                @if (auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id && $prescription->created_at->isToday())
-                                    <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
-                                        class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
+
+                                @if (auth()->user()->role === 'doctor')
+                                    @if ($prescription->created_at->isToday() && auth()->user()->employee->id === $prescription->employee_id)
+                                        <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
+                                            class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
+                                    @elseif ($prescription->created_at->isToday() == false)
+                                        <p>Chỉ chỉnh đơn thuốc cùng ngày</p>
+                                    @elseif (auth()->user()->employee->id !== $prescription->employee_id)
+                                        <p>Quyền chỉnh sửa thuộc về bác sĩ khác</p>
+                                    @endif
                                 @elseif(auth()->user()->role === 'admin')
                                     <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
                                         class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
-                                @else
-                                    <p>Bác sĩ khác</p>
                                 @endif
                             </td>
                         </tr>

@@ -3,8 +3,8 @@
 @section('content')
     <div class="container">
         <h1>Danh Sách Hồ Sơ Bệnh Án</h1>
-        @if(auth()->user()-> role ==='doctor')
-        <a href="{{ route('prescriptions.create') }}" class="btn btn-primary">Tiếp tục khám(Quay lại tạo đơn thuốc)</a>
+        @if(auth()->user()->role === 'doctor')
+            <a href="{{ route('prescriptions.create') }}" class="btn btn-primary">Tiếp tục khám(Quay lại tạo đơn thuốc)</a>
         @endif
         <table class="table">
             <thead>
@@ -38,7 +38,7 @@
                         <td>{{ $record->created_at }}</td> <!-- Ngày tạo -->
                         <td>{{ $record->updated_at }}</td> <!-- Ngày cập nhật -->
                         <td>
-                            @if (auth()->user()->role === 'admin' || auth()->user()->role === 'clinic_manager')
+                            @if (auth()->user()->role === 'admin' || (auth()->user()->role === 'clinic_manager' && $record->created_at >= now()->subDays(30)))
                                 <!-- Nếu là admin, luôn hiển thị nút sửa và xóa -->
                                 <a href="{{ route('medical_records.edit', $record->id) }}" class="btn btn-warning">Sửa</a>
                                 <form action="{{ route('medical_records.destroy', $record->id) }}" method="POST"
