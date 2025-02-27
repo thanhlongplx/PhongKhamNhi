@@ -160,7 +160,9 @@
 
 
             <div>
-                {{ $patients->links() }} <!-- Thêm phần phân trang -->
+            <div class="d-flex justify-content-center">
+        {{ $patients->links('pagination::bootstrap-4') }} <!-- Sử dụng Bootstrap 4 để tạo kiểu -->
+    </div>
             </div>
         @else
             <tr>

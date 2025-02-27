@@ -119,6 +119,6 @@
         </div>
 
 
-        {{ $paginatedPrescriptions->links() }}
+        {{ $paginatedPrescriptions->links('pagination::bootstrap-4') }}
     </div>
 @endsection

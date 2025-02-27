@@ -65,6 +65,7 @@
             </tbody>
         </table>
 
-        <!-- Phân trang -->
-    </div>
+<!-- Thêm liên kết phân trang -->
+{{ $prescriptionDetails->links('pagination::bootstrap-4') }}   
+ </div>
 @endsection

@@ -57,6 +57,7 @@ Route::resource('medications', MedicationController::class);
 
 // Routes cho người dùng
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::resource('users', UserController::class);
 
 // Routes cho đơn thuốc
 Route::get('/prescriptions', [PrescriptionController::class, 'index'])->name('prescriptions.index');

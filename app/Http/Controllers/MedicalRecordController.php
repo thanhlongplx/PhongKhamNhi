@@ -16,7 +16,7 @@ class MedicalRecordController extends Controller
         // Lấy hồ sơ kèm thông tin bệnh nhân và sắp xếp theo thời gian từ mới nhất đến cũ nhất
         $medicalRecords = MedicalRecord::with(['prescriptions', 'patient'])
                                         ->orderBy('created_at', 'desc') // Sắp xếp theo thời gian
-                                        ->get(); // Lấy tất cả dữ liệu
+                                        ->paginate(10); // Phân trang với 10 bản ghi mỗi trang
     
         $prescriptions = Prescription::all(); // Lấy tất cả đơn thuốc
     

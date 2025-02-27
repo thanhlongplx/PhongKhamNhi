@@ -42,23 +42,23 @@ class PrescriptionDetailController extends Controller
 
 
     // Lấy danh sách chi tiết đơn thuốc
-    public function index()
-    {
-        // Khởi tạo truy vấn chi tiết đơn thuốc
-        $query = PrescriptionDetail::with(['patient', 'prescription', 'medication'])
-            ->orderBy('created_at', 'desc'); // Sắp xếp theo thời gian từ mới nhất đến cũ nhất
+public function index()
+{
+    // Khởi tạo truy vấn chi tiết đơn thuốc
+    $query = PrescriptionDetail::with(['patient', 'prescription', 'medication'])
+        ->orderBy('created_at', 'desc'); // Sắp xếp theo thời gian từ mới nhất đến cũ nhất
 
-        // Kiểm tra vai trò người dùng
-        if (auth()->user()->role === 'nurse') {
-            // Nếu là điều dưỡng, chỉ lấy chi tiết đơn thuốc được tạo trong ngày hôm nay
-            $prescriptionDetails = $query->whereDate('created_at', today())->get();
-        } else {
-            // Nếu không phải điều dưỡng, lấy tất cả chi tiết đơn thuốc
-            $prescriptionDetails = $query->get();
-        }
-
-        return view('prescription_details.index', compact('prescriptionDetails')); // Truyền dữ liệu vào view
+    // Kiểm tra vai trò người dùng
+    if (auth()->user()->role === 'nurse') {
+        // Nếu là điều dưỡng, chỉ lấy chi tiết đơn thuốc được tạo trong ngày hôm nay
+        $prescriptionDetails = $query->whereDate('created_at', today())->paginate(10); // Phân trang với 10 bản ghi mỗi trang
+    } else {
+        // Nếu không phải điều dưỡng, lấy tất cả chi tiết đơn thuốc, phân trang với 10 bản ghi mỗi trang
+        $prescriptionDetails = $query->paginate(10); // Phân trang với 10 bản ghi mỗi trang
     }
+
+    return view('prescription_details.index', compact('prescriptionDetails')); // Truyền dữ liệu vào view
+}
     public function edit($id)
     {
         $prescription = PrescriptionDetail::findOrFail($id); // Tìm chi tiết đơn thuốc theo ID

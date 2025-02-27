@@ -72,5 +72,7 @@
                 @endforeach
             </tbody>
         </table>
+        <!-- Thêm liên kết phân trang -->
+    {{ $medicalRecords->links('pagination::bootstrap-4') }}
     </div>
 @endsection

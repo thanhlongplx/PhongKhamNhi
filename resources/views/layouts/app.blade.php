@@ -221,44 +221,47 @@
 
                     <!-- Topbar Search -->
                     @if(Auth::check())
-    @php
-        $role = Auth::user()->role;
-    @endphp
+                                        @php
+                                            $role = Auth::user()->role;
+                                        @endphp
 
-    <div class="d-flex flex-wrap">
-        @if($role === 'admin')
-            <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
-            <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
-            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
-            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
-            <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
-        @elseif(in_array($role, ['clinic_manager']))
-            <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
-            <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
-            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
-            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
-            <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
-        @elseif(in_array($role, ['doctor', 'nurse']))
-            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
-            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
-            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
-            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
-        @endif
-    </div>
-@endif
+                                        <div class="d-flex flex-wrap">
+                                            @if($role === 'admin')
+                                                <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+                                            @elseif(in_array($role, ['clinic_manager']))
+                                                <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+                                            @elseif(in_array($role, ['doctor', 'nurse']))
+                                                <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+                                                <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+                                            @endif
+                                        </div>
+                    @endif
+                    <div class="ml-auto current-date">
+                        Ngày {{ \Carbon\Carbon::now()->format('d/m/Y') }}
+                    </div>
 
                     <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
@@ -335,7 +338,7 @@
                             </div>
                         </li>
 
-                        
+
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
