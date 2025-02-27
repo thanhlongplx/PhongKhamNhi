@@ -10,11 +10,12 @@ class Invoice extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
+        'medical_record_id',
         'patient_id', // Thay đổi thành patient_id
         'employee_id', // Thay đổi thành employee_id
-        'invoice_code',
-        'invoice_date',
         'total_amount',
+        'date',
         'description',
     ];
 

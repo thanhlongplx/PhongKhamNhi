@@ -1,62 +1,79 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Appointment;
+use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    // Lấy danh sách lịch hẹn
+    // Hiển thị danh sách tất cả lịch hẹn
     public function index()
     {
-        $appointments = Appointment::all();
-        return response()->json($appointments);
+        $appointments = Appointment::with(['patient', 'employee', 'medicalRecord'])
+            ->orderBy('appointment_time', 'desc')
+            ->get();
+
+        return view('appointments.index', compact('appointments'));
     }
 
-    // Tạo lịch hẹn mới
+    // Hiển thị form tạo lịch hẹn
+    public function create()
+    {
+        // Truyền dữ liệu cần thiết cho view (ví dụ: danh sách bệnh nhân, nhân viên)
+        return view('appointments.create');
+    }
+
+    // Lưu lịch hẹn
     public function store(Request $request)
     {
-        // Kiểm tra xem người dùng có phải là bác sĩ không
-        if (auth()->user()->role !== 'bác sĩ') {
-            return response()->json(['message' => 'Bạn không có quyền tạo lịch hẹn.'], 403);
-        }
+        $request->validate([
+            'patient_id' => 'required|exists:patients,id',
+            'employee_id' => 'required|exists:employees,id',
+            'medical_record_id' => 'required|exists:medical_records,id',
+            'appointment_time' => 'required|date',
+            'status' => 'required|string',
+            'notes' => 'nullable|string',
+        ]);
 
-        $appointment = Appointment::create($request->all());
-        return response()->json($appointment, 201);
+        Appointment::create($request->all());
+
+        return redirect()->route('appointments.index')->with('success', 'Appointment created successfully.');
     }
 
-    // Lấy thông tin một lịch hẹn
-    public function show($id)
+    // Hiển thị lịch hẹn cụ thể
+    public function show(Appointment $appointment)
     {
-        $appointment = Appointment::find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Không tìm thấy lịch hẹn.'], 404);
-        }
-        return response()->json($appointment);
+        return view('appointments.show', compact('appointment'));
+    }
+
+    // Hiển thị form chỉnh sửa lịch hẹn
+    public function edit(Appointment $appointment)
+    {
+        return view('appointments.edit', compact('appointment'));
     }
 
     // Cập nhật lịch hẹn
-    public function update(Request $request, $id)
+    public function update(Request $request, Appointment $appointment)
     {
-        $appointment = Appointment::find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Không tìm thấy lịch hẹn.'], 404);
-        }
+        $request->validate([
+            'patient_id' => 'required|exists:patients,id',
+            'employee_id' => 'required|exists:employees,id',
+            'medical_record_id' => 'required|exists:medical_records,id',
+            'appointment_time' => 'required|date',
+            'status' => 'required|string',
+            'notes' => 'nullable|string',
+        ]);
 
         $appointment->update($request->all());
-        return response()->json($appointment);
+
+        return redirect()->route('appointments.index')->with('success', 'Appointment updated successfully.');
     }
 
     // Xóa lịch hẹn
-    public function destroy($id)
+    public function destroy(Appointment $appointment)
     {
-        $appointment = Appointment::find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Không tìm thấy lịch hẹn.'], 404);
-        }
-
         $appointment->delete();
-        return response()->json(['message' => 'Lịch hẹn đã được xóa.']);
+
+        return redirect()->route('appointments.index')->with('success', 'Appointment deleted successfully.');
     }
 }

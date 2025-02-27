@@ -23,7 +23,31 @@
 
     <!-- Custom styles for this template-->
     <link href="{{asset('css/sb-admin-2.min.css')}}" rel="stylesheet">
+    <style>
+        body {
+            overflow: hidden;
+            /* Ngăn chặn cuộn cho body */
+        }
 
+        #wrapper {
+            height: 100vh;
+            /* Chiều cao của wrapper bằng chiều cao của viewport */
+            overflow: hidden;
+            /* Ngăn chặn cuộn cho wrapper */
+        }
+
+        #content-wrapper {
+            overflow-y: auto;
+            /* Cho phép cuộn dọc cho content-wrapper */
+            height: calc(100vh - 56px);
+            /* Chiều cao của content-wrapper trừ đi chiều cao của navbar */
+        }
+
+        .topbar {
+            height: 56px;
+            /* Chiều cao của topbar */
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -77,25 +101,28 @@
 
                                                 @if($role === 'admin')
                                                     <a class="collapse-item" href="/staffs">Danh sách nhân viên</a>
-                                                    <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
-                                                    <a class="collapse-item" href="/medications">Quản lí thuốc</a>
                                                     <a class="collapse-item" href="/users">Quản lí người dùng</a>
+                                                    <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
+                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
                                                     <a class="collapse-item" href="/prescription-details">Quản lí chi tiết đơn thuốc</a>
                                                     <a class="collapse-item" href="/medical_records">Quản lí hồ sơ bệnh án</a>
-                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
+                                                    <a class="collapse-item" href="/appointments">Quản lí lịch hẹn</a>
+                                                    <a class="collapse-item" href="/medications">Quản lí thuốc</a>
                                                 @elseif(in_array($role, ['clinic_manager']))
                                                     <a class="collapse-item" href="/staffs">Danh sách nhân viên</a>
-                                                    <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
-                                                    <a class="collapse-item" href="/medications">Quản lí thuốc</a>
                                                     <a class="collapse-item" href="/users">Quản lí người dùng</a>
+                                                    <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
+                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
                                                     <a class="collapse-item" href="/prescription-details">Quản lí chi tiết đơn thuốc</a>
                                                     <a class="collapse-item" href="/medical_records">Quản lí hồ sơ bệnh án</a>
-                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
+                                                    <a class="collapse-item" href="/appointments">Quản lí lịch hẹn</a>
+                                                    <a class="collapse-item" href="/medications">Quản lí thuốc</a>
                                                 @elseif(in_array($role, ['doctor', 'nurse']))
                                                     <a class="collapse-item" href="/patients">Quản lí bệnh nhân</a>
+                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
                                                     <a class="collapse-item" href="/prescription-details">Quản lí chi tiết đơn thuốc</a>
                                                     <a class="collapse-item" href="/medical_records">Quản lí hồ sơ bệnh án</a>
-                                                    <a class="collapse-item" href="/prescriptions">Quản lí đơn thuốc</a>
+                                                    <a class="collapse-item" href="/appointments">Quản lí lịch hẹn</a>
                                                 @endif
                         @endif
                         <!-- Đường dẫn đến danh sách đơn thuốc -->
@@ -173,14 +200,7 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
-            <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong></strong> is packed with premium features, components,
-                    and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to
-                    Pro!</a>
-            </div>
+
 
         </ul>
         <!-- End of Sidebar -->
@@ -200,18 +220,42 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    @if(Auth::check())
+    @php
+        $role = Auth::user()->role;
+    @endphp
+
+    <div class="d-flex flex-wrap">
+        @if($role === 'admin')
+            <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
+            <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
+            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+            <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+        @elseif(in_array($role, ['clinic_manager']))
+            <a class="btn btn-sm btn-primary m-1" href="/staffs">Nhân viên</a>
+            <a class="btn btn-sm btn-primary m-1" href="/users">Người dùng</a>
+            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+            <a class="btn btn-sm btn-primary m-1" href="/medications">Thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+        @elseif(in_array($role, ['doctor', 'nurse']))
+            <a class="btn btn-sm btn-primary m-1" href="/patients">Bệnh nhân</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescriptions">Đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/prescription-details">Chi tiết đơn thuốc</a>
+            <a class="btn btn-sm btn-primary m-1" href="/medical_records">Hồ sơ bệnh án</a>
+            <a class="btn btn-sm btn-primary m-1" href="/appointments">Lịch hẹn</a>
+            <a class="btn btn-sm btn-primary m-1" href="{{ route('invoices.index') }}">Hóa đơn</a>
+        @endif
+    </div>
+@endif
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -291,70 +335,7 @@
                             </div>
                         </li>
 
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Trung tâm thông báo
-                                </h6>
-
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg" alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg" alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg" alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
+                        
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -383,11 +364,11 @@
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                @if( Auth::check())
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
+                                @if(Auth::check())
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Logout
+                                    </a>
                                 @endif
                             </div>
                         </li>

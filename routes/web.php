@@ -45,7 +45,8 @@ Route::get('/patients/{id}/edit', [PatientController::class, 'edit'])->name('pat
 Route::post('/patients/{id}', [PatientController::class, 'update'])->name('patients.update');
 // Xem hồ sơ bệnh án của bệnh nhân
 Route::get('patients/{id}', [PatientController::class, 'show'])->name('patients.show');
-
+// Route để cập nhật trạng thái bệnh nhân
+Route::post('/patients/{id}/clickChecked', [PatientController::class, 'clickChecked'])->name('patients.clickChecked');
 
 // Routes cho thuốc
 Route::get('/medications', [MedicationController::class, 'index'])->name('medications.index');
@@ -84,14 +85,18 @@ Route::post('/appointments', [AppointmentController::class, 'store'])->name('app
 Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('appointments.show');
 Route::put('/appointments/{id}', [AppointmentController::class, 'update'])->name('appointments.update');
 Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+Route::get('/appointments/{id}/edit', [AppointmentController::class, 'edit'])->name('appointments.edit');
 
 
 // Routes cho hóa đơn
-Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
-Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
-Route::get('/invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
-Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
-Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+Route::prefix('invoices')->group(function () {
+    Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::post('/', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::put('/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
+    Route::delete('/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+});
 
 //Xử lí đăng kí, đăng nhập
 // Route cho trang đăng ký

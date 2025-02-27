@@ -44,12 +44,20 @@ class PrescriptionDetailController extends Controller
     // Lấy danh sách chi tiết đơn thuốc
     public function index()
     {
-        // Lấy tất cả chi tiết đơn thuốc kèm theo thông tin đơn thuốc và thuốc
-        $prescriptionDetails = PrescriptionDetail::with(['patient', 'prescription', 'medication',])->get(); // Lấy tất cả dữ liệu
+        // Khởi tạo truy vấn chi tiết đơn thuốc
+        $query = PrescriptionDetail::with(['patient', 'prescription', 'medication'])
+            ->orderBy('created_at', 'desc'); // Sắp xếp theo thời gian từ mới nhất đến cũ nhất
 
-        return view('prescription_details.index', compact('prescriptionDetails')); // Sử dụng compact để truyền dữ liệu
-        $prescriptions = Prescription::all();
-        return view('prescription_details.index', compact('prescriptions')); // Truyền dữ liệu vào view
+        // Kiểm tra vai trò người dùng
+        if (auth()->user()->role === 'nurse') {
+            // Nếu là điều dưỡng, chỉ lấy chi tiết đơn thuốc được tạo trong ngày hôm nay
+            $prescriptionDetails = $query->whereDate('created_at', today())->get();
+        } else {
+            // Nếu không phải điều dưỡng, lấy tất cả chi tiết đơn thuốc
+            $prescriptionDetails = $query->get();
+        }
+
+        return view('prescription_details.index', compact('prescriptionDetails')); // Truyền dữ liệu vào view
     }
     public function edit($id)
     {

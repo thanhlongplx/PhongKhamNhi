@@ -12,16 +12,29 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <p><strong>Ngày Sinh:</strong> <span style="color: black;">{{ $patient->date_of_birth }}</span></p>
-                        <p><strong>Giới Tính:</strong> <span style="color: black;">{{ $patient->sex === 'M' ? 'Nam' : 'Nữ' }}</span></p>
+                        <p><strong>Giới Tính:</strong> <span
+                                style="color: black;">{{ $patient->sex === 'M' ? 'Nam' : 'Nữ' }}</span></p>
                         <p><strong>Chiều Cao:</strong> <span style="color: black;">{{ $patient->height }} cm</span></p>
                         <p><strong>Cân Nặng:</strong> <span style="color: black;">{{ $patient->weight }} kg</span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Tên Phụ Huynh:</strong> <span style="color: black;">{{ $patient->parent_name }}</span></p>
+                        <p><strong>Tên Phụ Huynh:</strong> <span style="color: black;">{{ $patient->parent_name }}</span>
+                        </p>
                         <p><strong>Trạng Thái:</strong> <span style="color: black;">{{ $patient->status }}</span></p>
                         <p><strong>Địa Chỉ:</strong> <span style="color: black;">{{ $patient->address }}</span></p>
-                        <p><strong>Số Điện Thoại:</strong> <span style="color: black;">{{ $patient->phone_number }}</span></p>
-                        <p><strong>Căn Cước Công Dân:</strong> <span style="color: black;">{{ $patient->id_cccd }}</span></p>
+                        <p><strong>Số Điện Thoại:</strong> <span style="color: black;">{{ $patient->phone_number }}</span>
+                        </p>
+                        <p><strong>Căn Cước Công Dân:</strong> <span style="color: black;">{{ $patient->id_cccd }}</span>
+                        </p>
+                        <p><strong>Ngày ghi nhận:</strong> <span
+                                style="color: white; background-color: black;">{{ $patient->created_at->format('d-m-Y') }}</span>
+                        </p>
+                        {{-- Hiển thị ngày hẹn tái khám --}}
+                        @if($patient->appointments->isNotEmpty())
+                            <p><strong>Ngày Hẹn Tái Khám:</strong> <span style="color: black;">
+                                    {{ \Carbon\Carbon::parse($patient->appointments->first()->appointment_time)->format('d/m/Y') }}
+                                </span></p>
+                        @endif
                     </div>
                 </div>
 
@@ -33,22 +46,30 @@
                         <div class="border p-3 mb-3">
                             <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <p><strong>Mã Hồ Sơ Bệnh Án:</strong> <span style="color: black;">HS{{ $prescription->medical_record_id }}</span></p>
-                                    <p><strong>Ngày Khám:</strong> <span style="color: black;">{{ $prescription->medicalRecord->visit_date }}</span></p>
+                                    <p><strong>Mã Chi Tiết Hồ Sơ:</strong> <span
+                                            style="color: black;">CTHS{{ $prescription->medical_record_id }}</span></p>
+                                    <p><strong>Ngày Khám:</strong> <span
+                                            style="color: black;">{{ \Carbon\Carbon::parse($prescription->medicalRecord->visit_date)->format('d/m/Y') }}</span>
+                                    </p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Triệu Chứng:</strong> <span style="background-color: orange; color: black;">{{ $prescription->medicalRecord->symptoms }}</span></p>
-                                    <p><strong>Chẩn Đoán:</strong> <span style="background-color: yellow; color: black;">{{ $prescription->medicalRecord->diagnosis }}</span></p>
+                                    <p><strong>Triệu Chứng:</strong> <span
+                                            style="background-color: orange; color: black;">{{ $prescription->medicalRecord->symptoms }}</span>
+                                    </p>
+                                    <p><strong>Chẩn Đoán:</strong> <span
+                                            style="background-color: yellow; color: black;">{{ $prescription->medicalRecord->diagnosis }}</span>
+                                    </p>
                                 </div>
                             </div>
-                            <p><strong>Phác Đồ Điều Trị:</strong> <span style="color: black;">{{ $prescription->medicalRecord->treatment }}</span></p>
+                            <p><strong>Phác Đồ Điều Trị:</strong> <span
+                                    style="color: black;">{{ $prescription->medicalRecord->treatment }}</span></p>
 
                             <h5 class="mt-4">Chi Tiết Đơn Thuốc:</h5>
                             @if($prescription->details && $prescription->details->isNotEmpty())
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th style="color: black;" >Tên Thuốc</th>
+                                            <th style="color: black;">Tên Thuốc</th>
                                             <th style="color: black;">Liều Lượng</th>
                                             <th style="color: black;">Tần Suất</th>
                                             <th style="color: black;">Số Lượng</th>

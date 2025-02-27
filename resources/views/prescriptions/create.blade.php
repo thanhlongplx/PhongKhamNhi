@@ -31,16 +31,16 @@
                 <div class="form-group col-md-6">
                     <label for="employee_id">Bác Sĩ</label>
                     @if(auth()->user()->role === 'admin')
-                        <select class="form-control" name="employee_id" required>
-                            <option value="">Chọn bác sĩ</option>
-                            @foreach($doctors as $doctor)
-                                <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
-                            @endforeach
-                        </select>
-                    @else
-                        <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
-                        <input type="hidden" name="employee_id" value="{{ auth()->user()->employee->id ?? '' }}">
-                    @endif
+    <select class="form-control" name="employee_id" required>
+        <option value="">Chọn bác sĩ</option>
+        @foreach($doctors as $doctor)
+            <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
+        @endforeach
+    </select>
+@else
+    <input type="hidden" name="employee_id" value="{{ auth()->user()->employee->id }}">
+    <input type="text" class="form-control" value="{{ auth()->user()->name }}" readonly>
+@endif
                 </div>
             </div>
 
@@ -68,17 +68,21 @@
             </div>
 
             <div id="medication-details"></div>
-
             <h5>Tổng Giá Đơn Thuốc: <span id="total-invoice">0</span> VNĐ</h5>
 
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="follow-up-checkbox">
                 <label class="form-check-label" for="follow-up-checkbox">Hẹn tái khám</label>
             </div>
+
             <div class="form-group" id="follow-up-date-container" style="display: none;">
                 <label for="follow_up_date">Ngày Tái Khám:</label>
                 <input type="date" class="form-control" name="follow_up_date" id="follow_up_date">
             </div>
+
+            <!-- Đảm bảo trường employee_id được gửi -->
+
+            <input type="hidden" name="follow_up_date" id="follow_up_date_hidden">
 
             <button type="submit" class="btn btn-primary">Thêm Đơn Thuốc</button>
         </form>
@@ -186,6 +190,13 @@
         document.getElementById('follow-up-checkbox').addEventListener('change', function () {
             const followUpDateContainer = document.getElementById('follow-up-date-container');
             followUpDateContainer.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.getElementById('follow_up_date_hidden').value = ''; // Reset nếu không chọn
+            }
+        });
+
+        document.getElementById('follow_up_date').addEventListener('change', function () {
+            document.getElementById('follow_up_date_hidden').value = this.value; // Lưu giá trị khi chọn
         });
     </script>
 @endsection

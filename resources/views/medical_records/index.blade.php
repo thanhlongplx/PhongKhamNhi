@@ -9,7 +9,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Mã Hồ Sơ</th>
+                    <th>Mã chi tiết hồ sơ</th>
                     <th>Ngày Khám</th>
                     <th>Triệu Chứng</th>
                     <th>Chẩn Đoán</th>
@@ -23,7 +23,7 @@
             <tbody>
                 @foreach ($medicalRecords as $record)
                     <tr>
-                        <td>HS{{ $record->id }}</td> <!-- ID hồ sơ -->
+                        <td>CTHS{{ $record->id }}</td> <!-- ID hồ sơ -->
                         <td>{{ $record->visit_date }}</td> <!-- Ngày khám -->
                         <td>{{ $record->symptoms }}</td> <!-- Triệu chứng -->
                         <td>{{ $record->diagnosis }}</td> <!-- Chẩn đoán -->
