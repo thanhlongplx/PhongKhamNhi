@@ -40,9 +40,7 @@
                         style="background-color: #F08080; color: white;">
                         Chưa thanh toán
                     </a>
-                    <a class="dropdown-item" href="/patients?search=Tái+khám" style="background-color: #FFFFE0;">
-                        Tái khám
-                    </a>
+                    
                 </div>
             </div>
 
@@ -83,7 +81,7 @@
                                                                             $patient->status === 'Tái khám' ? '#90EE90' :
                         ($patient->status === 'Đã khám' ? 'white' :
                             ($patient->status === 'Đợi khám' ? '#FFFFE0' :
-                                ($patient->status === 'Đã khám, chưa thanh toán' || $patient->status === 'Đã khám, hẹn tái khám' ? '#F08080' : 'transparent'))) 
+                                ($patient->status === 'Đã khám, chưa thanh toán' || $patient->status === 'Đã khám, hẹn tái khám' || $patient->status === 'Đã khám, hẹn tái khám(Chưa thanh toán)' ? '#F08080' : 'transparent'))) 
                                                                         }}">
 
                             <td>{{ $patient->name }}</td>
@@ -94,7 +92,7 @@
                             <td>{{ $patient->parent_name }}</td>
 
                             <td>
-                                @if(auth()->user()->role !== 'doctor' && ($patient->status === 'Đã khám, chưa thanh toán' || $patient->status === 'Đã khám, hẹn tái khám'))
+                                @if(auth()->user()->role !== 'doctor' && ($patient->status === 'Đã khám, chưa thanh toán' || $patient->status === 'Đã khám, hẹn tái khám' || $patient->status === 'Đã khám, hẹn tái khám(Chưa thanh toán)'))
                                     <form onsubmit="return confirm('Xác nhận thanh toán cho bệnh nhân {{ $patient->name }}?');"
                                         action="{{ route('patients.clickChecked', $patient->id) }}" method="POST"
                                         style="display:inline;">
@@ -103,7 +101,9 @@
                                         <button type="submit" class="btn btn-primary">Xác nhận thanh toán</button>
                                     </form>
                                 @endif
-                                @if ($patient->created_at->isToday() == false && $patient->status === 'Đợi khám')
+                                @if (!$patient->created_at->isToday() && 
+    $patient->status === 'Đợi khám' && 
+    !$patient->appointments()->exists())
     Bệnh nhân đợi khám trễ
 @elseif ($patient->status === 'Đã khám, hẹn tái khám(Đã thanh toán)')
     Đã khám, hẹn tái khám

@@ -7,9 +7,22 @@
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+
         @if(auth()->user()->role === 'admin' || auth()->user()->role === 'doctor')
             <a href="{{ route('prescriptions.create') }}" class="btn btn-primary">Thêm Đơn Thuốc</a>
         @endif
+
+        <!-- Form tìm kiếm -->
+        <form action="{{ route('prescription_details.index') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..."
+                    value="{{ request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
+        </form>
+
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -25,10 +38,10 @@
             </thead>
             <tbody>
                 @foreach ($prescriptionDetails as $prescription)
-                    <tr>
+                    <tr @if ($prescription->created_at->isToday()) style="background-color: lightgreen;" @endif>
                         <td>{{ $prescription->id }}</td>
                         <td>DT{{ $prescription->prescription->id ?? 'N/A' }}</td> <!-- Mã đơn thuốc -->
-                        <td>{{ $prescription->medication->medicine_name ?? 'N/A' }}</td> <!-- Mã thuốc -->
+                        <td>{{ $prescription->medication->medicine_name ?? 'N/A' }}</td> <!-- Tên thuốc -->
                         <td>{{ $prescription->quantity }}</td> <!-- Số lượng -->
                         <td>{{ $prescription->dosage }}</td> <!-- Liều lượng -->
                         <td>{{ $prescription->frequency }}</td> <!-- Tần suất -->
@@ -37,7 +50,6 @@
 
                         <td>
                             @if(auth()->user()->role === 'admin')
-                                <!-- Nếu là admin, luôn hiển thị nút sửa và xóa -->
                                 <a href="{{ route('prescription_details.edit', $prescription->id) }}"
                                     class="btn btn-warning">Sửa</a>
                                 <form action="{{ route('prescription_details.destroy', $prescription->id) }}" method="POST"
@@ -48,7 +60,6 @@
                                         class="btn btn-danger">Xóa</button>
                                 </form>
                             @elseif(auth()->user()->role === 'doctor' && $prescription->created_at->isToday() && auth()->user()->employee->id === $prescription->prescription->employee_id)
-                                <!-- Nếu là bác sĩ, kiểm tra ngày hôm nay và ID của bác sĩ -->
                                 <a href="{{ route('prescription_details.edit', $prescription->id) }}"
                                     class="btn btn-warning">Sửa</a>
                                 <form action="{{ route('prescription_details.destroy', $prescription->id) }}" method="POST"
@@ -65,7 +76,7 @@
             </tbody>
         </table>
 
-<!-- Thêm liên kết phân trang -->
-{{ $prescriptionDetails->links('pagination::bootstrap-4') }}   
- </div>
+        <!-- Thêm liên kết phân trang -->
+        {{ $prescriptionDetails->links('pagination::bootstrap-4') }}
+    </div>
 @endsection

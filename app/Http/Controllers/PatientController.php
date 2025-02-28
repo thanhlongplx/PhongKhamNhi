@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Employee;
 use App\Models\Invoice;
 use App\Models\MedicalRecord;
@@ -131,54 +132,76 @@ class PatientController extends Controller
         return redirect()->route('patients')->with('success', "Xóa bệnh nhân {$patient->name} thành công.");
     }
     public function clickChecked($id)
+    {
+        // Tìm bệnh nhân theo ID
+        $patient = Patient::findOrFail($id);
+
+        // Cập nhật trạng thái bệnh nhân
+        if ($patient->status === 'Đã khám, hẹn tái khám' || $patient->status === 'Đã khám, không hẹn tái khám') {
+            $patient->status = 'Đã khám, hẹn tái khám(đã thanh toán)';
+        } else {
+            $patient->status = 'Đã khám';
+        }
+
+        // Lưu trạng thái bệnh nhân
+        $patient->save();
+
+        // Lấy thông tin đơn thuốc liên quan đến bệnh nhân
+        $prescription = Prescription::where('patient_id', $id)->first();
+
+        // Kiểm tra xem có đơn thuốc không
+        if (!$prescription) {
+            return redirect()->route('patients')->with('error', "Không tìm thấy đơn thuốc cho bệnh nhân {$patient->name}.");
+        }
+
+        // Lấy hồ sơ y tế từ đơn thuốc
+        $medicalRecord = MedicalRecord::find($prescription->medical_record_id);
+
+        // Kiểm tra xem người dùng đã đăng nhập và có thông tin nhân viên không
+        $user = auth()->user();
+        if (!$user || !$user->employee) {
+            return redirect()->route('patients')->with('error', "Người dùng không hợp lệ hoặc không có thông tin nhân viên.");
+        }
+
+        // Lấy ID nhân viên
+        $employeeId = $user->employee->id;
+
+        // Tính tổng chi phí từ chi tiết đơn thuốc
+        $totalAmount = $prescription->details()->sum('total_price');
+
+        // Tạo hóa đơn mới
+        $invoice = new Invoice();
+        $invoice->medical_record_id = $medicalRecord->id; // ID hồ sơ y tế
+        $invoice->patient_id = $patient->id; // ID bệnh nhân
+        $invoice->employee_id = $employeeId; // ID nhân viên
+        $invoice->total_amount = $totalAmount; // Tổng số tiền
+        $invoice->date = now(); // Ngày hiện tại
+        $invoice->description = 'Hóa đơn cho bệnh nhân ' . $patient->name; // Mô tả hóa đơn
+        $invoice->save();
+
+        // Chuyển hướng về trang danh sách bệnh nhân với thông báo thành công
+        return redirect()->route('patients')->with('success', "Đã xác nhận bệnh nhân {$patient->name} hoàn thành thanh toán và tạo hóa đơn.");
+    }
+    public function setWaiting($id)
 {
     // Tìm bệnh nhân theo ID
     $patient = Patient::findOrFail($id);
     
     // Cập nhật trạng thái bệnh nhân
-    if ($patient->status === 'Đã khám, hẹn tái khám' || $patient->status === 'Đã khám, không hẹn tái khám') {
-        $patient->status = 'Đã khám, hẹn tái khám(đã thanh toán)';
-    } else {
-        $patient->status = 'Đã khám';
-    }
-    
-    // Lưu trạng thái bệnh nhân
-    $patient->save();
+    $patient->status = 'Đợi khám';
+    $patient->save(); // Lưu thay đổi
 
-    // Lấy thông tin đơn thuốc liên quan đến bệnh nhân
-    $prescription = Prescription::where('patient_id', $id)->first();
+    // Tìm lịch hẹn của bệnh nhân
+    $appointment = Appointment::where('patient_id', $patient->id)
+        ->where('appointment_time', '>', now()) // Chỉ tìm lịch hẹn trong tương lai
+        ->first();
 
-    // Kiểm tra xem có đơn thuốc không
-    if (!$prescription) {
-        return redirect()->route('patients')->with('error', "Không tìm thấy đơn thuốc cho bệnh nhân {$patient->name}.");
+    // Nếu tìm thấy lịch hẹn, cập nhật trạng thái của nó
+    if ($appointment) {
+        $appointment->status = 'Hoàn thành'; // Cập nhật trạng thái lịch hẹn
+        $appointment->save(); // Lưu thay đổi
     }
 
-    // Lấy hồ sơ y tế từ đơn thuốc
-    $medicalRecord = MedicalRecord::find($prescription->medical_record_id);
-
-    // Kiểm tra xem người dùng đã đăng nhập và có thông tin nhân viên không
-    $user = auth()->user();
-    if (!$user || !$user->employee) {
-        return redirect()->route('patients')->with('error', "Người dùng không hợp lệ hoặc không có thông tin nhân viên.");
-    }
-
-    // Lấy ID nhân viên
-    $employeeId = $user->employee->id;
-
-    // Tính tổng chi phí từ chi tiết đơn thuốc
-    $totalAmount = $prescription->details()->sum('total_price');
-
-    // Tạo hóa đơn mới
-    $invoice = new Invoice();
-    $invoice->medical_record_id = $medicalRecord->id; // ID hồ sơ y tế
-    $invoice->patient_id = $patient->id; // ID bệnh nhân
-    $invoice->employee_id = $employeeId; // ID nhân viên
-    $invoice->total_amount = $totalAmount; // Tổng số tiền
-    $invoice->date = now(); // Ngày hiện tại
-    $invoice->description = 'Hóa đơn cho bệnh nhân ' . $patient->name; // Mô tả hóa đơn
-    $invoice->save();
-
-    // Chuyển hướng về trang danh sách bệnh nhân với thông báo thành công
-    return redirect()->route('patients')->with('success', "Đã xác nhận bệnh nhân {$patient->name} hoàn thành thanh toán và tạo hóa đơn.");
+    return redirect()->route('patients')->with('success', 'Trạng thái bệnh nhân đã được cập nhật thành "Đợi khám" và lịch hẹn đã được đánh dấu là "Hoàn thành".');
 }
 }

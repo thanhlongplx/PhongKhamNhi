@@ -8,10 +8,29 @@ use Illuminate\Http\Request;
 class MedicationController extends Controller
 {
     // Lấy danh sách tất cả các thuốc
-    public function index()
+    public function index(Request $request)
     {
-        $medications = Medication::all();
-        return view('medications.index', compact('medications')); // Sử dụng compact để truyền dữ liệu
+        // Khởi tạo truy vấn lấy thuốc
+        $query = Medication::query();
+
+        // Kiểm tra nếu có từ khóa tìm kiếm
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                    ->orWhere('medicine_name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('dosage_form', 'like', "%{$search}%")
+                    ->orWhere('strength', 'like', "%{$search}%")
+                    ->orWhere('side_effect', 'like', "%{$search}%")
+                    ->orWhere('contraindications', 'like', "%{$search}%");
+            });
+        }
+
+        // Lấy danh sách thuốc và phân trang
+        $medications = $query->orderBy('created_at', 'desc')->paginate(10); // Đảm bảo gọi paginate trên truy vấn
+
+        return view('medications.index', compact('medications')); // Truyền dữ liệu vào view
     }
 
     // Thêm thuốc mới

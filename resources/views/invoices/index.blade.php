@@ -9,6 +9,17 @@
                 <h5>Hóa Đơn</h5>
             </div>
             <div class="card-body">
+                <!-- Form tìm kiếm -->
+                <form action="{{ route('invoices.index') }}" method="GET" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control"
+                            placeholder="Tìm kiếm theo ID hoặc tên bệnh nhân..." value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                        </div>
+                    </div>
+                </form>
+
                 @if($invoices->isEmpty())
                     <p class="text-muted">Chưa có hóa đơn nào được tạo.</p>
                 @else
@@ -26,7 +37,7 @@
                         </thead>
                         <tbody>
                             @foreach($invoices as $invoice)
-                                <tr>
+                                <tr @if ($invoice->created_at->isToday()) style="background-color: lightgreen;" @endif>
                                     <td>{{ $invoice->id }}</td>
                                     <td>{{ $invoice->medical_record_id }}</td>
                                     <td>{{ $invoice->patient->name ?? 'N/A' }}</td>
@@ -44,5 +55,8 @@
                 <a href="{{ route('patients') }}" class="btn btn-secondary">Quay Lại</a>
             </div>
         </div>
+
+        <!-- Thêm liên kết phân trang -->
+        {{ $invoices->links('pagination::bootstrap-4') }}
     </div>
 @endsection

@@ -20,7 +20,6 @@
                         @endforeach
                     </select>
                 </div>
-
                 <div class="form-group col-md-6">
                     <label for="employee_id">Bác Sĩ</label>
                     @if (auth()->user()->role === 'admin')

@@ -84,7 +84,7 @@
                                                 <td style="color: black;">{{ $detail->dosage }}</td>
                                                 <td style="color: black;">{{ $detail->frequency }}</td>
                                                 <td style="color: black;">{{ $detail->quantity }}</td>
-                                                <td style="color: black;">{{ $detail->total_price }}</td>
+                                                <td style="color: black;">{{ number_format($detail->total_price, 0, ',', '.') }} VND</td>
                                                 <td style="color: black;">{{ $detail->usage_instructions }}</td>
                                             </tr>
                                         @endforeach

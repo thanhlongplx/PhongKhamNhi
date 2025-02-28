@@ -9,6 +9,16 @@
         <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Thêm Người Dùng</a>
     @endif
 
+    <!-- Form tìm kiếm -->
+    <form action="{{ route('users') }}" method="GET" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+        </div>
+    </form>
+
     <table class="table">
         <thead>
             <tr>
@@ -47,5 +57,8 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- Thêm liên kết phân trang -->
+    {{ $users->links('pagination::bootstrap-4') }}
 </div>
 @endsection

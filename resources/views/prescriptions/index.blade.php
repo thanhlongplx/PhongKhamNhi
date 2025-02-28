@@ -33,88 +33,99 @@
                     </tr>
                 </thead>
                 <tbody>
-    {{-- Đơn thuốc của tất cả bệnh nhân nếu là admin --}}
-    @if (auth()->user()->role === 'admin')
-        @foreach ($paginatedPrescriptions as $prescription)
-            <tr style="color: black;">
-                <td>DT{{ $prescription->id }}</td>
-                <td>{{ $prescription->patient->name }}</td>
-                <td>{{ $prescription->doctor->name }}</td>
-                <td>HS{{ $prescription->medical_record_id }}</td>
-                <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
-                <td>{{ $prescription->notes }}</td>
-                <td>
-                    <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
-                    <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
-                    </form>
-                    <br>
-                    <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}" class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
-                </td>
-            </tr>
-        @endforeach
-    @else
-        {{-- Đơn thuốc của bác sĩ hiện tại --}}
-        @foreach ($paginatedPrescriptions as $prescription)
-            @if ($prescription->employee_id === auth()->user()->employee->id)
-                <tr style="color: black; background-color: lightgreen;">
-                    <td>DT{{ $prescription->id }}</td>
-                    <td>{{ $prescription->patient->name }}</td>
-                    <td>{{ $prescription->doctor->name }}</td>
-                    <td>HS{{ $prescription->medical_record_id }}</td>
-                    <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
-                    <td>{{ $prescription->notes }}</td>
-                    <td>
-                        @if ($prescription->created_at->isToday())
-                            <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
-                            <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
-                            </form>
-                            <br>
-                            <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}" class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
-                        @else
-                            <p>Chỉ chỉnh sửa đơn thuốc cùng ngày</p>
-                        @endif
-                    </td>
-                </tr>
-            @endif
-        @endforeach
-
-        {{-- Đơn thuốc của các bác sĩ khác --}}
-        @foreach ($paginatedPrescriptions as $prescription)
-            @if ($prescription->employee_id !== auth()->user()->employee->id)
-                <tr style="color: black; background-color: lightblue;">
-                    <td>DT{{ $prescription->id }}</td>
-                    <td>{{ $prescription->patient->name }}</td>
-                    <td>{{ $prescription->doctor->name }}</td>
-                    <td>HS{{ $prescription->medical_record_id }}</td>
-                    <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
-                    <td>{{ $prescription->notes }}</td>
-                    <td>
-                        @if ($prescription->created_at->isToday())
-                            @if (auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id)
-                                <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
-                                <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
-                                </form>
-                            @else
-                                <p>Quyền chỉnh sửa thuộc về bác sĩ khác</p>
+                    {{-- Đơn thuốc của tất cả bệnh nhân nếu là admin --}}
+                    @if (auth()->user()->role === 'admin' || auth()->user()->role === 'nurse')
+                        @foreach ($paginatedPrescriptions as $prescription)
+                            <tr style="color: black;">
+                                <td>DT{{ $prescription->id }}</td>
+                                <td>{{ $prescription->patient->name }}</td>
+                                <td>{{ $prescription->doctor->name }}</td>
+                                <td>HS{{ $prescription->medical_record_id }}</td>
+                                <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
+                                <td>{{ $prescription->notes }}</td>
+                                @if(auth()->user()->role !== 'nurse')
+                                <td>
+                                    <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
+                                    <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                                        style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                    </form>
+                                    <br>
+                                    <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
+                                        class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
+                                </td>
+                                @endif
+                            </tr>
+                        @endforeach
+                        <!-- Nếu ko phải là admin -->
+                    @else
+                        {{-- Đơn thuốc của bác sĩ hiện tại --}}
+                        @foreach ($paginatedPrescriptions as $prescription)
+                            @if ($prescription->employee_id === auth()->user()->employee->id)
+                                <tr style="color: black; background-color: lightgreen;">
+                                    <td>DT{{ $prescription->id }}</td>
+                                    <td>{{ $prescription->patient->name }}</td>
+                                    <td>{{ $prescription->doctor->name }}</td>
+                                    <td>HS{{ $prescription->medical_record_id }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
+                                    <td>{{ $prescription->notes }}</td>
+                                    <td>
+                                        @if ($prescription->created_at->isToday())
+                                            <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
+                                            <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                            </form>
+                                            <br>
+                                            <a href="{{ route('medical_records.edit', $prescription->medical_record_id) }}"
+                                                class="btn btn-info">Chỉnh Sửa Hồ Sơ Bệnh Án</a>
+                                        @else
+                                            <p>Chỉ chỉnh sửa đơn thuốc cùng ngày</p>
+                                        @endif
+                                    </td>
+                                </tr>
                             @endif
-                        @else
-                            <p>Chỉ chỉnh sửa đơn thuốc cùng ngày</p>
-                        @endif
-                    </td>
-                </tr>
-            @endif
-        @endforeach
-    @endif
-</tbody>
+                        @endforeach
+
+                        {{-- Đơn thuốc của các bác sĩ khác --}}
+                        @foreach ($paginatedPrescriptions as $prescription)
+                            @if ($prescription->employee_id !== auth()->user()->employee->id)
+                                <tr style="color: black; background-color: lightblue;">
+                                    <td>DT{{ $prescription->id }}</td>
+                                    <td>{{ $prescription->patient->name }}</td>
+                                    <td>{{ $prescription->doctor->name }}</td>
+                                    <td>HS{{ $prescription->medical_record_id }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($prescription->date)->format('d-m-Y') }}</td>
+                                    <td>{{ $prescription->notes }}</td>
+                                    <td>
+                                        @if ($prescription->created_at->isToday())
+                                            @if (auth()->user()->role === 'doctor' && auth()->user()->employee->id === $prescription->employee_id)
+                                                <a href="{{ route('prescriptions.edit', $prescription->id) }}" class="btn btn-warning">Sửa</a>
+                                                <form action="{{ route('prescriptions.destroy', $prescription->id) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</button>
+                                                </form>
+                                            @else
+                                                <p>Quyền chỉnh sửa thuộc về bác sĩ khác</p>
+                                            @endif
+                                        @else
+                                            <p>Chỉ chỉnh sửa đơn thuốc cùng ngày</p>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    @endif
+                </tbody>
             </table>
         </div>
 

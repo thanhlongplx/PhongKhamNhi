@@ -16,10 +16,19 @@
         </div>
     @endif
 
-
-
     <div class="container">
         <h1>Danh Sách Nhân Viên</h1>
+
+        <!-- Form tìm kiếm -->
+        <form action="{{ route('employees.index') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
+        </form>
+
         <!-- Nút thêm nhân viên -->
         <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEmployeeModal">
             Thêm nhân viên
@@ -47,9 +56,7 @@
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}" data-name="{{ $user->name }}"
                                             data-role="{{ $user->role }}">
-                                            {{ $user->id }}|
-                                            {{ $user->name }}|
-                                            {{ $user->email }}
+                                            {{ $user->id }}| {{ $user->name }}| {{ $user->email }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -64,8 +71,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="position">Chức vụ</label>
-                                <input type="text" class="form-control" name="position" id="employee_role" required
-                                    readonly>
+                                <input type="text" class="form-control" name="position" id="employee_role" required readonly>
                             </div>
                             <div class="form-group">
                                 <label for="department">Phòng ban</label>
@@ -88,13 +94,8 @@
                 </div>
             </div>
         </div>
+
         <!-- Modal sửa thông tin -->
-
-
-
-
-
-        <!-- Đặt modal ở cuối file view -->
         <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -147,9 +148,7 @@
                 document.getElementById('department').value = department; // Cập nhật phòng ban
                 document.getElementById('phone_number').value = phone_number; // Cập nhật số điện thoại
             }
-        </script>
 
-        <script>
             function updateUserInfo() {
                 const select = document.getElementById('user_id');
                 const selectedOption = select.options[select.selectedIndex];
@@ -161,6 +160,7 @@
                 document.getElementById('employee_role').value = role;
             }
         </script>
+
         <table class="table">
             <thead>
                 <tr>
@@ -186,15 +186,15 @@
                         <td>{{ $employee->date_of_hire }}</td> <!-- Ngày tuyển dụng -->
                         <td>{{ $employee->created_at }}</td> <!-- Ngày tạo -->
                         <td>{{ $employee->updated_at }}</td> <!-- Ngày cập nhật -->
-                        <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeModal"
+                        <td>
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editEmployeeModal"
                                 onclick="editEmployee('{{ $employee->id }}', '{{ $employee->position }}', '{{ $employee->department }}', '{{ $employee->phone_number }}')">
                                 Sửa
-                            </button></td> <!-- Ngày cập nhật -->
+                            </button>
+                        </td>
                         <td>
-
                             <!-- Nút xóa -->
-                            <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
-                                style="display:inline;">
+                            <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger"

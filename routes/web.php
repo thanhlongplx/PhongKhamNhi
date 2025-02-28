@@ -15,6 +15,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\Prescription_detailController;
+use App\Http\Controllers\StatisticalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,14 +81,24 @@ Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name(
 Route::get('/medical_records/{id}/edit', [MedicalRecordController::class, 'edit'])->name('medical_records.edit');
 Route::put('/medical_records/{id}', [MedicalRecordController::class, 'update'])->name('medical_records.update');
 Route::delete('medical_records/{id}', [MedicalRecordController::class, 'destroy'])->name('medical_records.destroy');
-// Routes cho lịch hẹn
+
+
+// Hiển thị danh sách lịch hẹn
 Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+// Tạo lịch hẹn mới
 Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+// Hiển thị chi tiết lịch hẹn
 Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('appointments.show');
-Route::put('/appointments/{id}', [AppointmentController::class, 'update'])->name('appointments.update');
+// Cập nhật lịch hẹn
+Route::post('/appointments/update', [AppointmentController::class, 'update'])->name('appointments.update');
+// Xóa lịch hẹn
 Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy'])->name('appointments.destroy');
+// Hiển thị form tạo lịch hẹn mới
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-Route::get('/appointments/{id}/edit', [AppointmentController::class, 'edit'])->name('appointments.edit');
+// Hiển thị form chỉnh sửa lịch hẹn
+Route::get('/appointments/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointments.edit');
+Route::post('/patients/{id}/status/waiting', [PatientController::class, 'setWaiting'])->name('patients.setWaiting');
+
 
 
 // Routes cho hóa đơn
@@ -134,5 +145,6 @@ Route::get('/', function () {
 });
 
 
-//Phân quyền
+//Thống kê
+Route::get('/statistics', [StatisticalController::class, 'index'])->name('statistics.index');
 

@@ -8,11 +8,26 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     // Lấy danh sách tất cả người dùng
-    public function index()
-    {
-        $users = User::all();
-        return view('users.index', compact('users'));
+    public function index(Request $request)
+{
+    // Khởi tạo truy vấn lấy tất cả người dùng
+    $query = User::query();
+
+    // Kiểm tra nếu có từ khóa tìm kiếm
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
+              ->orWhere('role', 'like', "%{$search}%");
+        });
     }
+
+    // Lấy danh sách người dùng với phân trang
+    $users = $query->paginate(10); // Phân trang với 10 bản ghi mỗi trang
+
+    return view('users.index', compact('users'));
+}
 
     // Hiển thị form để thêm người dùng mới
     public function create()

@@ -9,10 +9,30 @@ use Illuminate\Support\Facades\Validator;
 class InvoiceController extends Controller
 {
     // Lấy danh sách hóa đơn
-    public function index()
+    public function index(Request $request)
 {
-    $invoices = Invoice::all();
-    return view('invoices.index', compact('invoices')); // Đảm bảo bạn trả về view
+    // Khởi tạo truy vấn
+    $query = Invoice::with(['patient', 'doctor']); // Tải trước các mối quan hệ
+
+    // Kiểm tra nếu có từ khóa tìm kiếm
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('id', 'like', "%{$search}%")
+                ->orWhere('medical_record_id', 'like', "%{$search}%")
+                ->orWhereHas('patient', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('doctor', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    // Sắp xếp giảm dần theo ngày tạo hóa đơn
+    $invoices = $query->orderBy('created_at', 'desc')->paginate(10); // Phân trang với 10 bản ghi mỗi trang
+
+    return view('invoices.index', compact('invoices')); // Trả về view
 }
 
     // Tạo hóa đơn mới

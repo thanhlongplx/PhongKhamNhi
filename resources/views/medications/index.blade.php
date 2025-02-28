@@ -1,11 +1,22 @@
-@extends('layouts.app')
+@extends('layouts.app') <!-- Kế thừa từ layout chính -->
 
 @section('content')
     <div class="container">
         <h1>Danh Sách Thuốc</h1>
+        
+        <!-- Form tìm kiếm -->
+        <form action="{{ route('medications') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control"
+                    placeholder="Tìm kiếm theo mã thuốc, tên thuốc..." value="{{ request()->input('search') }}">
+                <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+            </div>
+        </form>
+
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMedicationModal">
             Thêm Thuốc
         </button>
+        
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -52,6 +63,9 @@
                 @endforeach
             </tbody>
         </table>
+
+        <!-- Thêm liên kết phân trang -->
+        {{ $medications->links('pagination::bootstrap-4') }}
     </div>
 
     @include('medications.add') <!-- Modal thêm thuốc -->

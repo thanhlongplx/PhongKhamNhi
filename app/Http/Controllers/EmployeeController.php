@@ -10,13 +10,29 @@ class EmployeeController extends Controller
 {
 
     // Lấy danh sách tất cả nhân viên
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy tất cả các nhân viên kèm thông tin người dùng
-        $employees = Employee::with('user')->get();
+        // Khởi tạo truy vấn lấy tất cả nhân viên kèm thông tin người dùng
+        $query = Employee::with('user');
+
+        // Kiểm tra nếu có từ khóa tìm kiếm
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('staff_code', 'like', "%{$search}%")
+                    ->orWhere('position', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('email', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Lấy danh sách nhân viên với phân trang
+        $employees = $query->paginate(10); // Phân trang với 10 bản ghi mỗi trang
         $users = User::all(); // Hoặc điều kiện phù hợp với ứng dụng của bạn
 
-        return view('employees.index', compact('employees', 'users')); // Sử dụng compact để truyền dữ liệu
+        return view('employees.index', compact('employees', 'users')); // Truyền dữ liệu vào view
     }
     public function create()
     {
@@ -56,30 +72,30 @@ class EmployeeController extends Controller
 //     }
 // }
 
-public function update(Request $request, $id)
-{
-    // Xác thực dữ liệu đầu vào
-    $request->validate([
-        'position' => 'required|string|max:255', // Sử dụng 'position' để xác thực
-        'department' => 'nullable|string|max:255',
-        'phone_number' => 'nullable|string|max:15',
-    ]);
+    public function update(Request $request, $id)
+    {
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'position' => 'required|string|max:255', // Sử dụng 'position' để xác thực
+            'department' => 'nullable|string|max:255',
+            'phone_number' => 'nullable|string|max:15',
+        ]);
 
-    // Tìm nhân viên
-    $employee = Employee::findOrFail($id);
+        // Tìm nhân viên
+        $employee = Employee::findOrFail($id);
 
-    // Cập nhật thông tin nhân viên
-    $employee->update($request->only(['position', 'department', 'phone_number']));
+        // Cập nhật thông tin nhân viên
+        $employee->update($request->only(['position', 'department', 'phone_number']));
 
-    // Cập nhật thông tin người dùng
-    $user = User::find($employee->user_id);
-    if ($user) {
-        $user->role = $request->position; // Cập nhật trường role
-        $user->save(); // Lưu thay đổi
+        // Cập nhật thông tin người dùng
+        $user = User::find($employee->user_id);
+        if ($user) {
+            $user->role = $request->position; // Cập nhật trường role
+            $user->save(); // Lưu thay đổi
+        }
+
+        return redirect()->route('employees.index')->with('success', 'Cập nhật thông tin nhân viên thành công.');
     }
-
-    return redirect()->route('employees.index')->with('success', 'Cập nhật thông tin nhân viên thành công.');
-}
     // Thêm nhân viên mới
     public function store(Request $request)
     {

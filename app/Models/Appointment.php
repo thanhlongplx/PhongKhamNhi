@@ -35,4 +35,8 @@ class Appointment extends Model
     {
         return $this->belongsTo(MedicalRecord::class, 'medical_record_id', 'id');
     }
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }
